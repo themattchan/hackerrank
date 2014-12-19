@@ -21,9 +21,9 @@
   ;; zipped list of coefficients and powers
   (define coeff-pows (map cons coeffs powers))
   ;; Takes a pair of (coeff . pow) -> (c)x^pow
-  (define (make-fx cp-pair)
+  (define (make-fx cp)
     (lambda (x)
-      (* (car cp-pair) (expt x (cdr cp-pair)))))
+      (* (car cp) (expt x (cdr cp)))))
   ;; The sum (a1)x^b1 + (a2)x^b2 + (a3)x^b3 ......(an)x^bn
   (foldl + 0
          (map (lambda (f) (f x))
