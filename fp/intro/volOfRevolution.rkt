@@ -1,13 +1,10 @@
 #lang racket
-;; Enter your code here. Read input from STDIN. Print output to STDOUT
+;; Read params from stdin
 ;; first line: n num of coefficients
 ;; second line: n num of powers
 ;; thrid line: limits
-
-;; Read params from stdin
 (define (get-num-input)
   (map string->number (string-split (read-line))))
-
 (define coeffs (get-num-input))
 (define powers (get-num-input))
 (define limits (get-num-input))
