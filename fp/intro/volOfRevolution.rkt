@@ -4,7 +4,7 @@
 ;; second line: n num of powers
 ;; thrid line: limits
 
-;; Read from stdin
+;; Read params from stdin
 (define (get-num-input)
   (map string->number (string-split (read-line))))
 
@@ -47,7 +47,7 @@
    (lambda (x)
      (* (combo x) (combo x) pi))))
 
-
+;; Print the solution
 (display (~r (integrate limits) #:precision 2))
 (newline)
 (display (~r (area limits) #:precision 2))
