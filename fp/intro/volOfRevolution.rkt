@@ -26,15 +26,15 @@
       (* (car cp-pair) (expt x (cdr cp-pair)))))
   ;; The sum (a1)x^b1 + (a2)x^b2 + (a3)x^b3 ......(an)x^bn
   (foldl + 0
-         (map (lambda (proc) (proc x))
+         (map (lambda (f) (f x))
               (map make-fx coeff-pows))))
 
-(define (integrate limits function)
+(define (integrate limits f)
   (let ([llim (car limits)]
         [ulim (cadr limits)])
     (define (go acc x)
       (if (> x ulim) acc
-          (go (+ acc (* 0.001 (function x)))
+          (go (+ acc (* 0.001 (f x)))
               (+ 0.001 x))))
     (go 0 llim)))
 
