@@ -25,8 +25,7 @@
     (lambda (x)
       (* (car cp) (expt x (cdr cp)))))
   ;; The sum (a1)x^b1 + (a2)x^b2 + (a3)x^b3 ......(an)x^bn
-  (foldl +
-         0
+  (foldl + 0
          (map (lambda (f) (f x))
               (map make-fx coeff-pows))))
 
