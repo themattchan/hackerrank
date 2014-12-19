@@ -25,7 +25,7 @@
     (lambda (x)
       (* (car cp-pair) (expt x (cdr cp-pair)))))
   (foldl + 0
-         (map (lambda (proc) (apply proc (list x)))
+         (map (lambda (proc) (proc x))
               (map make-fx coeff-pows))))
 
 (define (generic-integrate limits function)
