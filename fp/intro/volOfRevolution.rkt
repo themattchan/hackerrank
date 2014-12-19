@@ -17,11 +17,10 @@
 ;; (define powers '(6 7 8 9 10))
 ;; (define limits '(1 4))
 
-;; zipped list
-(define coeff-pows (map cons coeffs powers))
-
 ;; The sum (a1)x^b1 + (a2)x^b2 + (a3)x^b3 ......(an)x^bn
 (define (combo x)
+  ;; zipped list of coefficients and powers
+  (define coeff-pows (map cons coeffs powers))
   ;; Takes a pair of (coeff . pow) -> (c)x^pow
   (define (make-fx cp-pair)
     (lambda (x)
