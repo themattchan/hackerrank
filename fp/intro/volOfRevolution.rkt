@@ -29,7 +29,7 @@
          (map (lambda (proc) (proc x))
               (map make-fx coeff-pows))))
 
-(define (generic-integrate limits function)
+(define (integrate limits function)
   (let ([llim (car limits)]
         [ulim (cadr limits)])
     (define (go acc x)
@@ -38,16 +38,15 @@
               (+ 0.001 x))))
     (go 0 llim)))
 
-(define (integrate limits)
-  (generic-integrate limits combo))
+(define (area) (integrate limits combo))
 
-(define (area limits)
-  (generic-integrate
+(define (volume)
+  (integrate
    limits
    (lambda (x)
      (* (combo x) (combo x) pi))))
 
 ;; Print the solution
-(display (~r (integrate limits) #:precision 2))
+(display (~r (area) #:precision 2))
 (newline)
-(display (~r (area limits) #:precision 2))
+(display (~r (volume) #:precision 2))
