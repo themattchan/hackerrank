@@ -17,7 +17,6 @@
 ;; (define powers '(6 7 8 9 10))
 ;; (define limits '(1 4))
 
-;; The sum (a1)x^b1 + (a2)x^b2 + (a3)x^b3 ......(an)x^bn
 (define (combo x)
   ;; zipped list of coefficients and powers
   (define coeff-pows (map cons coeffs powers))
@@ -25,6 +24,7 @@
   (define (make-fx cp-pair)
     (lambda (x)
       (* (car cp-pair) (expt x (cdr cp-pair)))))
+  ;; The sum (a1)x^b1 + (a2)x^b2 + (a3)x^b3 ......(an)x^bn
   (foldl + 0
          (map (lambda (proc) (proc x))
               (map make-fx coeff-pows))))
