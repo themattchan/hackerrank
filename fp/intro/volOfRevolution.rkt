@@ -18,7 +18,7 @@
 ;; (define limits '(1 4))
 
 (define (combo x)
-  ;; zipped list of coefficients and powers
+  ;; Zipped list of coefficients and powers
   (define coeff-pows (map cons coeffs powers))
   ;; Takes a pair of (coeff . pow) -> (c)x^pow
   (define (make-fx cp)
