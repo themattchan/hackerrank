@@ -29,7 +29,7 @@
          (map (lambda (f) (f x))
               (map make-fx coeff-pows))))
 
-(define (integrate limits f)
+(define (integrate f)
   (let ([llim (car limits)]
         [ulim (cadr limits)]
         [delta 0.001])
@@ -39,11 +39,10 @@
               (+ delta x))))
     (go 0 llim)))
 
-(define (area) (integrate limits combo))
+(define (area) (integrate combo))
 
 (define (volume)
   (integrate
-   limits
    (lambda (x)
      (* (combo x) (combo x) pi))))
 
