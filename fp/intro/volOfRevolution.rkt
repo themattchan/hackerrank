@@ -37,7 +37,9 @@
               (+ 0.001 x))))
     (go 0 llim)))
 
-(define (integrate limits) (generic-integrate limits combo))
+(define (integrate limits)
+  (generic-integrate limits combo))
+
 (define (area limits)
   (generic-integrate
    limits
