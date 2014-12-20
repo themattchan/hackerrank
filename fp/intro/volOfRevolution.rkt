@@ -2,7 +2,7 @@
 ;; Read params from stdin
 ;; first line: n num of coefficients
 ;; second line: n num of powers
-;; thrid line: limits
+;; third line: limits
 (define (get-num-input)
   (map string->number (string-split (read-line))))
 (define coeffs (get-num-input))
