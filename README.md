@@ -1,4 +1,4 @@
 HackerRank
 ==========
 
-Mostly the FP problems on HackerRank.
+Competitive functional programming for fun and profit.
