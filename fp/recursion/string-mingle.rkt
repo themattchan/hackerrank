@@ -6,8 +6,6 @@
    (list->string
     (foldl
      (lambda (x a)
-       (append
-        (append a (list (car x)))
-        (list (cdr x))))
+       (append a (list (car x) (cdr x))))
      '()
      zip))))
