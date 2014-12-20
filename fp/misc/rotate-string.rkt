@@ -8,7 +8,7 @@
     (if (= 0 n)
         lst
         (rotate-left
-         (- n 1)
+         (sub1 n)
          (if (null? lst)
              '()
              (append (cdr lst)
@@ -16,7 +16,7 @@
   (let ([chars (string->list str)])
     (map list->string
          (for/list ([i (length chars)])
-           (rotate-left (+ 1 i) chars)))))
+           (rotate-left (add1 n) chars)))))
 
 (for ([i (map string-join (map rotate lines))])
   (display i)
