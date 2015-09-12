@@ -28,7 +28,7 @@ int main(void) {
 	/* #1 */
 	/* print_array(ar,100); */
 
-    /* #2 */
+	/* #2 */
 	/* for (int i = 0; i < 100; i++) {
 	 * 	for (int j = 0; j < ar[i]; j++) {
 	 * 		printf("%d ", i);
