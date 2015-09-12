@@ -13,7 +13,7 @@ void print_array(int ar_size, int* ar)
 }
 
 // this does not feel like insertion sort...
-void insertionSort(int ar_size, int*  ar)
+void insertionSort(int ar_size, int* ar)
 {
 	 for (int i = 1; i < ar_size; i++) {
 		  for (int j = i-1; j > -1; j--) {
