@@ -7,10 +7,10 @@ int size;
 
 void print_array(int* ar)
 {
-	 for (int i = 0; i < size; i++) {
-		  printf("%d ", ar[i]);
-	 }
-	 putchar('\n');
+	for (int i = 0; i < size; i++) {
+		printf("%d ", ar[i]);
+	}
+	putchar('\n');
 }
 
 void swap(int* a, int* b) {
@@ -52,5 +52,5 @@ int main(void) {
 
 	quicksort(0, size-1, ar);
 
-    return 0;
+	return 0;
 }
