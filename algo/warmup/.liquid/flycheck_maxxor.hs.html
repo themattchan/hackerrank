@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>/Users/matt/Dropbox/hackerrank/algo/warmup/flycheck_maxxor.hs</title>
+</head>
+<head>
+<link type='text/css' rel='stylesheet' href='liquid.css' />
+</head>
+
+<body>
+<hr>
+Put mouse over identifiers to see inferred types
+<pre><span class=hs-linenum> 1: </span><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Bits</span>
+<span class=hs-linenum> 2: </span>
+<span class=hs-linenum> 3: </span><span class='hs-definition'>maxXor</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
+<span class=hs-linenum> 4: </span><a class=annot href="#"><span class=annottext>GHC.Types.Int -&gt; GHC.Types.Int -&gt; GHC.Types.Int</span><span class='hs-definition'>maxXor</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>l</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>r</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(GHC.Types.Int -&gt; GHC.Types.Int -&gt; GHC.Types.Int)
+-&gt; [GHC.Types.Int] -&gt; GHC.Types.Int</span><span class='hs-varid'>foldl1</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int
+-&gt; x2:GHC.Types.Int
+-&gt; {v : GHC.Types.Int | v == if (x1 &gt; v) then x1 else v}</span><span class='hs-varid'>max</span></a> <a class=annot href="#"><span class=annottext>{v : [GHC.Types.Int] | len v &gt;= 0}</span><span class='hs-keyglyph'>[</span></a><a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int -&gt; GHC.Types.Int -&gt; GHC.Types.Int</span><span class='hs-varop'>`xor`</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>y</span></a> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span><span class='hs-keyglyph'>&lt;-</span><a class=annot href="#"><span class=annottext>{v : [GHC.Types.Int] | len v &gt;= 0}</span><span class='hs-keyglyph'>[</span></a><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == l}</span><span class='hs-varid'>l</span></a><span class='hs-keyglyph'>..</span><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == r}</span><span class='hs-varid'>r</span></a><span class='hs-keyglyph'>]</span><span class='hs-layout'>,</span> <span class='hs-varid'>y</span><span class='hs-keyglyph'>&lt;-</span><a class=annot href="#"><span class=annottext>{v : [GHC.Types.Int] | len v &gt;= 0}</span><span class='hs-keyglyph'>[</span></a><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == l}</span><span class='hs-varid'>l</span></a><span class='hs-keyglyph'>..</span><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == r}</span><span class='hs-varid'>r</span></a><span class='hs-keyglyph'>]</span><span class='hs-keyglyph'>]</span>
+<span class=hs-linenum> 5: </span>
+<span class=hs-linenum> 6: </span><span class='hs-definition'>main</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum> 7: </span><a class=annot href="#"><span class=annottext>{v : (GHC.Types.IO ()) | v == Main.main}</span><span class='hs-definition'>main</span></a> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<span class=hs-linenum> 8: </span>  <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>l</span></a> <span class='hs-keyglyph'>&lt;-</span> <a class=annot href="#"><span class=annottext>(GHC.Types.IO GHC.Types.Int)</span><span class='hs-varid'>readLn</span></a>
+<span class=hs-linenum> 9: </span>  <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>r</span></a> <span class='hs-keyglyph'>&lt;-</span> <a class=annot href="#"><span class=annottext>(GHC.Types.IO GHC.Types.Int)</span><span class='hs-varid'>readLn</span></a>
+<span class=hs-linenum>10: </span>  <a class=annot href="#"><span class=annottext>GHC.Types.Int -&gt; (GHC.Types.IO ())</span><span class='hs-varid'>print</span></a> <a class=annot href="#"><span class=annottext>(GHC.Types.Int -&gt; (GHC.Types.IO ()))
+-&gt; GHC.Types.Int -&gt; (GHC.Types.IO ())</span><span class='hs-varop'>$</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int -&gt; GHC.Types.Int -&gt; GHC.Types.Int</span><span class='hs-varid'>maxXor</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == l}</span><span class='hs-varid'>l</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == r}</span><span class='hs-varid'>r</span></a>
+</pre>
+</body>
+</html>

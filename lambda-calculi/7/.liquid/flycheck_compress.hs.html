@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>/Users/matt/Dropbox/hackerrank/lambda-calculi/7/flycheck_compress.hs</title>
+</head>
+<head>
+<link type='text/css' rel='stylesheet' href='liquid.css' />
+</head>
+
+<body>
+<hr>
+Put mouse over identifiers to see inferred types
+<pre><span class=hs-linenum>1: </span><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>List</span>
+<span class=hs-linenum>2: </span><a class=annot href="#"><span class=annottext>[GHC.Types.Char] -&gt; [GHC.Types.Char]</span><span class='hs-definition'>compress</span></a> <a class=annot href="#"><span class=annottext>[GHC.Types.Char]</span><span class='hs-varid'>str</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>[[GHC.Types.Char]] -&gt; [GHC.Types.Char]</span><span class='hs-varid'>concat</span></a> <a class=annot href="#"><span class=annottext>([[GHC.Types.Char]] -&gt; [GHC.Types.Char])
+-&gt; [[GHC.Types.Char]] -&gt; [GHC.Types.Char]</span><span class='hs-varop'>$</span></a> <a class=annot href="#"><span class=annottext>([GHC.Types.Char] -&gt; [GHC.Types.Char])
+-&gt; x3:[[GHC.Types.Char]]
+-&gt; {v : [[GHC.Types.Char]] | len v == len x3}</span><span class='hs-varid'>map</span></a> <a class=annot href="#"><span class=annottext>[GHC.Types.Char] -&gt; [GHC.Types.Char]</span><span class='hs-varid'>comp</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>[GHC.Types.Char] -&gt; [[GHC.Types.Char]]</span><span class='hs-varid'>group</span></a> <a class=annot href="#"><span class=annottext>{v : [GHC.Types.Char] | v == str &amp;&amp; len v &gt;= 0}</span><span class='hs-varid'>str</span></a><span class='hs-layout'>)</span>
+<span class=hs-linenum>3: </span>    <span class='hs-keyword'>where</span>
+<span class=hs-linenum>4: </span>      <a class=annot href="#"><span class=annottext>[GHC.Types.Char] -&gt; [GHC.Types.Char]</span><span class='hs-varid'>comp</span></a> <a class=annot href="#"><span class=annottext>[GHC.Types.Char]</span><span class='hs-varid'>s</span></a><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Char | v == x}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Char
+-&gt; x2:[GHC.Types.Char]
+-&gt; {v : [GHC.Types.Char] | null v &lt;=&gt; false &amp;&amp; xListSelector v == x1 &amp;&amp; len v == 1 + len x2 &amp;&amp; xsListSelector v == x2}</span><span class='hs-conop'>:</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>GHC.Types.Int -&gt; [GHC.Types.Char]</span><span class='hs-varid'>show</span></a> <a class=annot href="#"><span class=annottext>(GHC.Types.Int -&gt; [GHC.Types.Char])
+-&gt; GHC.Types.Int -&gt; [GHC.Types.Char]</span><span class='hs-varop'>$</span></a> <a class=annot href="#"><span class=annottext>x1:[GHC.Types.Char] -&gt; {v : GHC.Types.Int | v == len x1}</span><span class='hs-varid'>length</span></a> <a class=annot href="#"><span class=annottext>{v : [GHC.Types.Char] | null v &lt;=&gt; false &amp;&amp; v == s &amp;&amp; xListSelector v == x &amp;&amp; len v &gt;= 0}</span><span class='hs-varid'>s</span></a><span class='hs-layout'>)</span>
+<span class=hs-linenum>5: </span>      <span class='hs-varid'>comp</span> <span class='hs-varid'>s</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span>   <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : [GHC.Types.Char] | v == s &amp;&amp; len v &gt;= 0}</span><span class='hs-varid'>s</span></a>
+<span class=hs-linenum>6: </span>
+<span class=hs-linenum>7: </span><a class=annot href="#"><span class=annottext>{v : (GHC.Types.IO ()) | v == Main.main}</span><span class='hs-definition'>main</span></a> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<span class=hs-linenum>8: </span>  <a class=annot href="#"><span class=annottext>[GHC.Types.Char]</span><span class='hs-varid'>str</span></a>  <span class='hs-keyglyph'>&lt;-</span> <a class=annot href="#"><span class=annottext>{v : (GHC.Types.IO [GHC.Types.Char]) | v == System.IO.getLine}</span><span class='hs-varid'>getLine</span></a>
+<span class=hs-linenum>9: </span>  <a class=annot href="#"><span class=annottext>[GHC.Types.Char] -&gt; (GHC.Types.IO ())</span><span class='hs-varid'>putStrLn</span></a> <a class=annot href="#"><span class=annottext>([GHC.Types.Char] -&gt; (GHC.Types.IO ()))
+-&gt; [GHC.Types.Char] -&gt; (GHC.Types.IO ())</span><span class='hs-varop'>$</span></a> <a class=annot href="#"><span class=annottext>[GHC.Types.Char] -&gt; [GHC.Types.Char]</span><span class='hs-varid'>compress</span></a> <a class=annot href="#"><span class=annottext>{v : [GHC.Types.Char] | v == str &amp;&amp; len v &gt;= 0}</span><span class='hs-varid'>str</span></a>
+</pre>
+</body>
+</html>

@@ -1,0 +1,13 @@
+UNSAFE
+ /Users/matt/Dropbox/hackerrank/fp/recursion/flycheck_prefix.hs:8:46-49: Error: Liquid Type Mismatch
+   Inferred type
+     VV : [a] | null VV <=> false && VV == ?a && xListSelector VV == x && len VV == 1 + len as && xsListSelector VV == as && len VV >= 0
+  
+   not a subtype of Required type
+     VV : [a] | len VV >= 0 && len VV < len as
+  
+   In Context
+     VV : [a] | null VV <=> false && VV == ?a && xListSelector VV == x && len VV == 1 + len as && xsListSelector VV == as && len VV >= 0
+     x  : a
+     as : [a] | len as >= 0
+     ?a : [a] | null ?a <=> false && xListSelector ?a == x && len ?a == 1 + len as && xsListSelector ?a == as && len ?a >= 0

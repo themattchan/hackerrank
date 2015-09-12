@@ -1,0 +1,155 @@
+UNSAFE
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:30:27: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == h
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.hours && 0 <= VV
+  
+   In Context
+     VV : Int | VV == h
+     Main.hours
+        : [[Char]] | len Main.hours >= 0
+     h  : Int
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:31:46: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == h
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.hours && 0 <= VV
+  
+   In Context
+     VV : Int | VV == h
+     Main.hours
+        : [[Char]] | len Main.hours >= 0
+     h  : Int
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:32:46: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == h
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.hours && 0 <= VV
+  
+   In Context
+     VV : Int | VV == h
+     Main.hours
+        : [[Char]] | len Main.hours >= 0
+     h  : Int
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:33:47-49: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == ?a && VV == h + ?b
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.hours && 0 <= VV
+  
+   In Context
+     VV : Int | VV == ?a && VV == h + ?b
+     Main.hours
+        : [[Char]] | len Main.hours >= 0
+     h  : Int
+     ?b : Int | ?b == (1  :  int)
+     ?a : Int | ?a == h + ?b
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:34:26: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == m
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.mins && 0 <= VV
+  
+   In Context
+     VV : Int | VV == m
+     m  : Int
+     Main.mins
+        : [[Char]] | len Main.mins >= 0
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:36:29: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == h
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.mins && 0 <= VV
+  
+   In Context
+     VV : Int | VV == h
+     Main.mins
+        : [[Char]] | len Main.mins >= 0
+     h  : Int
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:37:40-43: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == ?a && VV == m - ?b
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.mins && 0 <= VV
+  
+   In Context
+     VV : Int | VV == ?a && VV == m - ?b
+     m  : Int
+     Main.mins
+        : [[Char]] | len Main.mins >= 0
+     ?b : Int | ?b == (20  :  int)
+     ?a : Int | ?a == m - ?b
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:38:30: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == h
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.hours && 0 <= VV
+  
+   In Context
+     VV : Int | VV == h
+     Main.hours
+        : [[Char]] | len Main.hours >= 0
+     h  : Int
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:42:30: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == m && VV < m
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.mins && 0 <= VV
+  
+   In Context
+     VV : Int | VV == m && VV < m
+     m  : Int
+     Main.mins
+        : [[Char]] | len Main.mins >= 0
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:44:35-37: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == ?b && VV == h + ?a
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.hours && 0 <= VV
+  
+   In Context
+     VV : Int | VV == ?b && VV == h + ?a
+     Main.hours
+        : [[Char]] | len Main.hours >= 0
+     h  : Int
+     ?b : Int | ?b == h + ?a
+     ?a : Int | ?a == (1  :  int)
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:45:44-47: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == ?b && VV == m - ?a
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.mins && 0 <= VV
+  
+   In Context
+     VV : Int | VV == ?b && VV == m - ?a
+     m  : Int
+     Main.mins
+        : [[Char]] | len Main.mins >= 0
+     ?b : Int | ?b == m - ?a
+     ?a : Int | ?a == (20  :  int)
+ /Users/matt/Dropbox/hackerrank/springsprint15/flycheck_time.hs:46:36-38: Error: Liquid Type Mismatch
+   Inferred type
+     VV : Int | VV == ?a && VV == h + ?b
+  
+   not a subtype of Required type
+     VV : Int | VV < len Main.hours && 0 <= VV
+  
+   In Context
+     VV : Int | VV == ?a && VV == h + ?b
+     Main.hours
+        : [[Char]] | len Main.hours >= 0
+     h  : Int
+     ?b : Int | ?b == (1  :  int)
+     ?a : Int | ?a == h + ?b
