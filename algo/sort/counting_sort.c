@@ -16,9 +16,8 @@ int main(void) {
 	scanf("%d", &size);
 
 	int ar[100];
-	for (int i = 0; i < 100; i++) {
-		ar[i] = 0;
-	}
+	memset(ar, 0, sizeof(ar));
+
 	for (int i = 0; i < size; i++) {
 		int j = 0;
 		scanf("%d", &j);
@@ -26,14 +25,14 @@ int main(void) {
 	}
 
 	/* #1 */
-	/* print_array(ar,100); */
+	print_array(ar, 100);
 
 	/* #2 */
-	/* for (int i = 0; i < 100; i++) {
-	 * 	for (int j = 0; j < ar[i]; j++) {
-	 * 		printf("%d ", i);
-	 * 	}
-	 * } */
+	for (int i = 0; i < 100; i++) {
+		for (int j = 0; j < ar[i]; j++) {
+			printf("%d ", i);
+		}
+	}
 
 	return 0;
 }
