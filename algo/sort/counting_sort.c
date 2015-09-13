@@ -116,7 +116,7 @@ int main(void) {
 			strcat(ar[j], BLANK);
 		} else {
 			char buf[10] = "";
-			scanf("%s ", buf);
+			scanf("%s", buf);
 			strcat(ar[j], buf);
 			strcat(ar[j], " ");
 		}
