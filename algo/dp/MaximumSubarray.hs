@@ -25,7 +25,6 @@ readInt = readLn
 main :: IO ()
 main = do
   n <- readInt
-  forM [1..n] $ \_ -> do
+  forM_ [1..n] $ \_ -> do
     (mf, ps) <- readArray >>= return . kadane
     printf "%d %d\n" mf ps
-  return ()
