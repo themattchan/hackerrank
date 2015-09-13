@@ -1,6 +1,7 @@
 module Quicksort where
-import Data.List
+import Control.Arrow ((>>>))
 import Control.Monad
+import Data.List
 
 displayList :: [Int] -> String
 displayList = intercalate " " . map show
@@ -24,6 +25,6 @@ quicksort (x:xs) = let (sm, gt) = partition (<= x) xs in
 main :: IO ()
 main = do
   getLine
-  ns <- getLine >>= return . map read . words
+  ns <- getLine >>= (words >>> map read >>> return)
   quicksort ns
   return ()
