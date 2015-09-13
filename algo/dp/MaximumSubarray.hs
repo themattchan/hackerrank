@@ -17,7 +17,7 @@ readArray :: IO [Integer]
 readArray = do
   getLine
   x <- getLine
-  return . map (\x -> (read x)::Integer) . words $ x
+  return . map read . words $ x
 
 readInt :: IO Int
 readInt = readLn
