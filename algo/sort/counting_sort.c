@@ -106,10 +106,6 @@ int main(void) {
 			ar[j] = (char*) malloc(size/2 * 10 * sizeof(char));
 			ar[j][0] = '\0';
 		}
-		if (ar[j] == NULL) {
-			printf("FAIL malloc/realloc");
-			return 1;
-		}
 
 		if (i < size/2) {
 			scanf("%*[^\n]");		/* discard the word */
