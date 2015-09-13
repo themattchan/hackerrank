@@ -115,7 +115,7 @@ int main(void) {
 			scanf("%*[^\n]");		/* discard the word */
 			strcat(ar[j], BLANK);
 		} else {
-			char buf[11] = "";
+			char buf[10] = "";
 			scanf("%s ", buf);
 			strcat(ar[j], buf);
 			strcat(ar[j], " ");
