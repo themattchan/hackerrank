@@ -3,8 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-int
-main()
+int main()
 {
     int MAX;
     scanf("%d", &MAX);
