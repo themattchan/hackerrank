@@ -5,8 +5,8 @@ import Text.Printf
 
 -- Kadane's algorithm, with some extra sauce
 kadane :: [Integer] -> (Integer, Integer)
-kadane xs = let ans@(mf,ps) = go' xs in
-  if all (< 0) xs then (mf, maximum xs) else ans
+kadane xs = let ans = go' xs in
+  if all (< 0) xs then fmap (const $ maximum xs) ans else ans
   where
     go me mf ps []     = (mf, ps)
     go me mf ps (x:xs) = let me' = max x (me + x)
