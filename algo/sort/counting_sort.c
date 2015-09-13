@@ -101,52 +101,22 @@ int main(void) {
 		int j = 0;
 		scanf("%d", &j);
 
-		if (i < size/2) {
-			scanf("%*[^\n]");		/* discard the word */
-
-			/*
-			if (ar[j] == NULL) {
-				ar[j] = (char*) malloc(strlen(BLANK) +1);
-				ar[j][0] = '\0';
-			} else {
-				ar[j] = (char*) realloc(ar[j], sizeof(*ar[j]) + strlen(BLANK));
-			}
-			*/
-
-			/* Fine, fuck you, I'll just malloc a HUGE chunk of memory */
-			if (ar[j] == NULL) {
-				ar[j] = (char*) malloc(size/2 * 10 * sizeof(char));
-				ar[j][0] = '\0';
-			}
-			if (ar[j] == NULL) {
-				printf("FAIL malloc/realloc");
-				return 1;
-			}
-			strcat(ar[j], BLANK);
+		/* This is gross but it simplifies things somewhat */
+		if (ar[j] == NULL) {
+			ar[j] = (char*) malloc(size/2 * 10 * sizeof(char));
+			ar[j][0] = '\0';
+		}
+		if (ar[j] == NULL) {
+			printf("FAIL malloc/realloc");
+			return 1;
 		}
 
-		else {
+		if (i < size/2) {
+			scanf("%*[^\n]");		/* discard the word */
+			strcat(ar[j], BLANK);
+		} else {
 			char buf[11] = "";
 			scanf("%s ", buf);
-
-			/*
-			if (ar[j] == NULL) {
-				ar[j] = (char*) malloc(strlen(buf) +1);
-				ar[j][0] = '\0';
-			} else {
-				ar[j] = (char*) realloc(ar[j], sizeof(*ar[j]) + strlen(buf) +1);
-			}
-			*/
-
-			/* Fine, fuck you, I'll just malloc a HUGE chunk of memory */
-			if (ar[j] == NULL) {
-				ar[j] = (char*) malloc(size/2 * 10 * sizeof(char));
-				ar[j][0] = '\0';
-			}
-			if (ar[j] == NULL) {
-				printf("FAIL malloc/realloc");
-				return 1;
-			}
 			strcat(ar[j], buf);
 			strcat(ar[j], " ");
 		}
