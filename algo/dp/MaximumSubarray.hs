@@ -1,4 +1,5 @@
 module MaximumSubarray where
+import Control.Arrow ((>>>))
 import Control.Monad
 import Text.Printf
 
@@ -26,5 +27,5 @@ main :: IO ()
 main = do
   n <- readInt
   forM_ [1..n] $ \_ -> do
-    (mf, ps) <- readArray >>= return . kadane
+    (mf, ps) <- readArray >>= (kadane >>> return)
     printf "%d %d\n" mf ps
