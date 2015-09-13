@@ -23,8 +23,7 @@ quicksort (x:xs) = let (sm, gt) = partition (<= x) xs in
 
 main :: IO ()
 main = do
-  getLine -- # of ns not needed
+  getLine
   ns <- getLine >>= return . map read . words
   quicksort ns
   return ()
-  --putStrLn $ displayList sorted
