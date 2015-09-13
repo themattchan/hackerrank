@@ -13,10 +13,7 @@ void print_array(int* ar, int size)
 	putchar('\n');
 }
 
-#ifdef PROBLEM
-
-#if (PROBLEM == 1)
-int main(void) {
+void problem1(void) {
 
 	int size;
 	scanf("%d", &size);
@@ -31,12 +28,9 @@ int main(void) {
 	}
 
 	print_array(ar, 100);
-	return 0;
 }
-#endif
 
-#if (PROBLEM == 2)
-int main(void) {
+void problem2(void) {
 
 	int size;
 	scanf("%d", &size);
@@ -55,13 +49,9 @@ int main(void) {
 			printf("%d ", i);
 		}
 	}
-
-	return 0;
 }
-#endif
 
-#if (PROBLEM == 3)
-int main(void) {
+void problem3(void) {
 
 	int size;
 	scanf("%d", &size);
@@ -81,15 +71,11 @@ int main(void) {
 		running += ar[i];
 		printf("%d ", running);
 	}
-
-	return 0;
 }
-#endif
 
-#if (PROBLEM == 4)
 const char *BLANK = "- ";
 
-int main(void) {
+void problem4(void) {
 
 	int size;
 	scanf("%d", &size);
@@ -125,8 +111,16 @@ int main(void) {
 		}
 	}
 	putchar('\n');
+}
+
+int main(void) {
+
+	switch (PROBLEM) {
+	case 1: problem1(); break;
+	case 2: problem2(); break;
+	case 3: problem3(); break;
+	case 4: problem4(); break;
+	}
+
 	return 0;
 }
-#endif
-
-#endif
