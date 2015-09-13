@@ -3,7 +3,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-int funny(const char *str) {
+int funny(const char *str)
+{
 	int len = strlen(str);
 	int fun = 1;
 	for (int i = 1, j = len-1; i < len; i++, j--) {
@@ -16,7 +17,8 @@ int funny(const char *str) {
 	return 1;
 }
 
-int main() {
+int main()
+{
 	int n;
 	scanf("%d", &n);
 
