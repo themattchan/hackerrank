@@ -20,7 +20,6 @@ readMatrix n = replicateM n $
 
 main :: IO ()
 main = do
-  n <- readLn
-  mtx <- readMatrix n
+  mtx <- readLn >>= readMatrix
   let (ld,rd) = diags mtx
   print . abs $ sum ld - sum rd
