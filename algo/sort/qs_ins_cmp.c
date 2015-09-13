@@ -14,14 +14,16 @@ void print_array(int* ar)
 	putchar('\n');
 }
 
-void swap(int* a, int* b) {
+void swap(int* a, int* b)
+{
 	int tmp = *a;
 	*a = *b;
 	*b = tmp;
 	swaps++;
 }
 
-int partition(int lo, int hi, int* ar) {
+int partition(int lo, int hi, int* ar)
+{
 	int pivot = ar[hi];
 	int swp_i = lo;
 
@@ -35,10 +37,10 @@ int partition(int lo, int hi, int* ar) {
 	return swp_i;
 }
 
-void quicksort(int lo, int hi, int* ar) {
+void quicksort(int lo, int hi, int* ar)
+{
 	if (lo < hi) {
 		int pi = partition(lo, hi, ar);
-//		print_array(ar);
 		quicksort(lo, pi-1, ar);
 		quicksort(pi+1, hi, ar);
 	}
@@ -63,7 +65,8 @@ int insertionSort(int ar_size, int* ar)
 }
 
 
-int main(void) {
+int main(void)
+{
 	scanf("%d", &size);
 
 	int ar1[size], ar2[size];
