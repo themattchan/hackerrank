@@ -1,5 +1,5 @@
 module Quicksort where
-import Control.Arrow ((>>>))
+import Control.Applicative
 import Control.Monad
 import Data.List
 
@@ -25,6 +25,6 @@ quicksort (x:xs) = let (sm, gt) = partition (<= x) xs in
 main :: IO ()
 main = do
   getLine
-  ns <- getLine >>= (words >>> map read >>> return)
+  ns <- getLine <**> pure (map read . words)
   quicksort ns
   return ()
