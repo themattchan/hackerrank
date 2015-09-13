@@ -1,4 +1,5 @@
 module CountingSort where
+import Control.Applicative
 import Control.Monad
 import Data.List
 import qualified Data.Set as S
@@ -20,7 +21,7 @@ parseInp ss = let (i:x:_) = words ss
 
 main :: IO ()
 main = do
-  n  <- getLine >>= return . read
-  xs <- replicateM n getLine >>= mapM (return . parseInp)
+  n  <- getLine <**> pure read
+  xs <- replicateM n getLine <**> pure (map parseInp)
   let pp = countingSort xs
   putStrLn $ intercalate " " pp
