@@ -1,8 +1,8 @@
 #lang racket
 
 (define nums
-  (sort (for/list ([i (read)])
-          (read)) <))
+  (sort (for/list ([i (read)]) (read))
+        <))
 
 (car (foldl
       (lambda (x a)
