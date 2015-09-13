@@ -13,8 +13,8 @@ void print_array(int* ar, int size)
 	putchar('\n');
 }
 
-void problem1(void) {
-
+void problem1(void)
+{
 	int size;
 	scanf("%d", &size);
 
@@ -30,8 +30,8 @@ void problem1(void) {
 	print_array(ar, 100);
 }
 
-void problem2(void) {
-
+void problem2(void)
+{
 	int size;
 	scanf("%d", &size);
 
@@ -51,8 +51,8 @@ void problem2(void) {
 	}
 }
 
-void problem3(void) {
-
+void problem3(void)
+{
 	int size;
 	scanf("%d", &size);
 
@@ -75,8 +75,8 @@ void problem3(void) {
 
 const char *BLANK = "- ";
 
-void problem4(void) {
-
+void problem4(void)
+{
 	int size;
 	scanf("%d", &size);
 
@@ -113,8 +113,8 @@ void problem4(void) {
 	putchar('\n');
 }
 
-int main(void) {
-
+int main(void)
+{
 	switch (PROBLEM) {
 	case 1: problem1(); break;
 	case 2: problem2(); break;
