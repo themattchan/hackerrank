@@ -13,6 +13,6 @@ closest = let pairs xs = zipWith (\a b -> ((a,b), abs (b-a))) xs (tail xs)
 main :: IO ()
 main = do
   getLine
-  xs <- getLine <**> pure (map (\x -> (read x)::Integer) . words) <**> pure sort
+  xs <- getLine <**> pure (map read . words) <**> pure sort
   mapM (uncurry $ printf "%d %d ") $ closest xs
   printf "\n"
