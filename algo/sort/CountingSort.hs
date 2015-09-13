@@ -2,26 +2,28 @@ module CountingSort where
 import Control.Applicative
 import Control.Monad
 import Data.List
-import qualified Data.Set as S
 
 -- The full counting sort
 
 type IndexedString = (Int, String)
 
 countingSort :: [IndexedString] -> [String]
-countingSort xs = let (s1,s2) = splitAt (length xs `div` 2) xs
-                      s1'     = S.fromList s1
-                      sorted = sortBy (\a b -> fst a `compare` fst b)  xs
-                  in map (\x -> if x `S.member` s1' then "-" else snd x) sorted
+countingSort xs = let sorted  = sortBy (\a b -> fst a `compare` fst b)  xs
+                  in map snd sorted
 
+parseInp1 :: String -> IndexedString
+parseInp1 ss = let (i:_) = words ss
+              in (read i, "-")
 
-parseInp :: String -> IndexedString
-parseInp ss = let (i:x:_) = words ss
+parseInp2 :: String -> IndexedString
+parseInp2 ss = let (i:x:_) = words ss
               in (read i, x)
 
 main :: IO ()
 main = do
   n  <- getLine <**> pure read
-  xs <- replicateM n getLine <**> pure (map parseInp)
-  let pp = countingSort xs
+  let n' = n `div` 2
+  xs <- replicateM n' getLine <**> pure (map parseInp1)
+  ys <- replicateM n' getLine <**> pure (map parseInp2)
+  let pp = countingSort (xs++ys)
   putStrLn $ intercalate " " pp
