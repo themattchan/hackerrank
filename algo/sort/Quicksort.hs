@@ -1,6 +1,5 @@
 module Quicksort where
 import Data.List
-import Control.Applicative
 import Control.Monad
 
 displayList :: [Int] -> String
@@ -25,7 +24,7 @@ quicksort (x:xs) = let (sm, gt) = partition (<= x) xs in
 main :: IO ()
 main = do
   getLine -- # of ns not needed
-  ns <- getLine >>= mapM (\x -> pure ((read x)::Int)) . words
+  ns <- getLine >>= return . map read . words
   quicksort ns
   return ()
   --putStrLn $ displayList sorted
