@@ -19,12 +19,9 @@ kadane xs = let ans = go' xs in
 readArray :: IO [Integer]
 readArray = getLine *> getLine <**> pure (map read . words)
 
-readInt :: IO Int
-readInt = readLn
-
 main :: IO ()
 main = do
-  n <- readInt
+  n <- readLn
   forM_ [1..n] . const $
     readArray <**> pure kadane
     >>= (uncurry $ printf "%d %d\n")
