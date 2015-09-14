@@ -1,11 +1,16 @@
+#include <iostream>
+#include <string>
 #include <stdio.h>
 #include <algorithm>
+#include <queue>
+
+using namespace std;
 
 struct node
 {
     int data;
-    node* left;
-    node* right;
+    node *left;
+    node *right;
 };
 
 bool isLeaf(node *n)
@@ -36,7 +41,6 @@ void Postorder(node *root)
 	if (isLeaf(root)) return;
 }
 
-
 void Inorder(node *root)
 {
 	if (root->left)
@@ -63,7 +67,7 @@ int height(node * root)
 	if (root->right)
 		r = height(root->right);
 
-	return std::max(l+1,r+1);
+	return max(l+1,r+1);
 }
 
 void go_left(node *root) {
@@ -89,4 +93,76 @@ void top_view(node * root)
 
 void LevelOrder(node * root)
 {
+	queue<node*> q;
+	q.push(root);
+	while (!q.empty()) {
+		node *n = q.front();
+		q.pop();
+		printf("%d ", n->data);
+		if (n->left)
+			q.push(n->left);
+		if (n->right)
+			q.push(n->right);
+	}
+}
+
+
+node* insert(node * root, int value)
+{
+	node *n = root;
+
+	node* ins = new node();
+	ins->data = value;
+	ins->left = NULL;
+	ins->right = NULL;
+
+	if (root == NULL) {
+		return ins;
+	}
+
+	// yuck
+	while (true) {
+		if (n->data > value) {
+			if (n->left) {
+				n = n->left;
+			} else {
+				n->left = ins;
+				return root;
+			}
+		} else {
+			if (n->right) {
+				n = n->right;
+			} else {
+				n->right = ins;
+				return root;
+			}
+		}
+	}
+
+   return root;
+}
+
+/*
+typedef struct node
+{
+	int freq;
+	char data;
+	node *left;
+	node *right;
+} node;
+*/
+void decode_huff(node *root, string s)
+{
+	node *n = root;
+	for (int i = 0; i < s.size(); i++) {
+		if (s.at(i) == '0')
+			n = n->left;
+		else
+			n = n->right;
+
+		if (isLeaf(n)) {
+			cout << n->data;
+			n = root;
+		}
+	}
 }
