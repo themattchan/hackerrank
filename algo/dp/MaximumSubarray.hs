@@ -25,6 +25,6 @@ readInt = readLn
 main :: IO ()
 main = do
   n <- readInt
-  forM_ [1..n] $ \_ ->
+  forM_ [1..n] . const $
     readArray <**> pure kadane
     >>= (uncurry $ printf "%d %d\n")
