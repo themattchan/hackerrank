@@ -8,10 +8,10 @@ struct Node
 
 Node* Reverse(Node *head)
 {
-    Node *tmp = NULL;
+	Node *tmp = NULL;
 
 	/* swap next and prev for all nodes of
-       doubly linked list */
+	   doubly linked list */
 	while (head) {
 		tmp = head->prev;
 		head->prev = head->next;
@@ -20,7 +20,7 @@ Node* Reverse(Node *head)
 	}
 
 	if (tmp)
-        return tmp->prev;
+		return tmp->prev;
 	else
-        return tmp;
+		return tmp;
 }
