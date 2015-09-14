@@ -8,11 +8,13 @@ struct node
     node* right;
 };
 
-bool isLeaf(node *n) {
+bool isLeaf(node *n)
+{
 	return (!n->left && !n->right);
 }
 
-void Preorder(node *root) {
+void Preorder(node *root)
+{
 	printf("%d ", root->data);
 
 	if (isLeaf(root)) return;
@@ -23,8 +25,8 @@ void Preorder(node *root) {
 		Preorder(root->right);
 }
 
-void Postorder(node *root) {
-
+void Postorder(node *root)
+{
 	if (root->left)
 		Postorder(root->left);
 	if (root->right)
@@ -35,7 +37,8 @@ void Postorder(node *root) {
 }
 
 
-void Inorder(node *root) {
+void Inorder(node *root)
+{
 	if (root->left)
 		Inorder(root->left);
 
