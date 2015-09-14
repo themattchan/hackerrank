@@ -138,8 +138,8 @@ Node* RemoveDuplicates(Node *head)
 			nn->next = nn->next->next;
 		}
 		if (nn->next != NULL) {
-    		nn = nn->next;
-        }
+			nn = nn->next;
+		}
 	}
 	return head;
 }
