@@ -65,3 +65,28 @@ int height(node * root)
 
 	return std::max(l+1,r+1);
 }
+
+void go_left(node *root) {
+	if (root->left)
+		go_left(root->left);
+	printf("%d ", root->data);
+}
+
+void top_view(node * root)
+{
+	go_left(root);
+
+	// go right
+	node *r = NULL;
+	if (root->right)
+		r = root->right;
+
+	while (r) {
+		printf("%d ", r->data);
+		r = r->right;
+	}
+}
+
+void LevelOrder(node * root)
+{
+}
