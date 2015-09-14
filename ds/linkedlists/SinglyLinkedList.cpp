@@ -128,5 +128,18 @@ int GetNode(Node *head,int positionFromTail)
 
 Node* RemoveDuplicates(Node *head)
 {
+	if (head == NULL || head->next == NULL) {
+		return head;
+	}
 
+	Node *nn = head;
+	while (nn->next != NULL) {
+		while (nn->next != NULL && nn->data == nn->next->data) {
+			nn->next = nn->next->next;
+		}
+		if (nn->next != NULL) {
+    		nn = nn->next;
+        }
+	}
+	return head;
 }
