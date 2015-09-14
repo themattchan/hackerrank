@@ -143,3 +143,61 @@ Node* RemoveDuplicates(Node *head)
 	}
 	return head;
 }
+
+// Floyd's cycle detection algorithm
+int HasCycle(Node* head)
+{
+	Node *slow = head;
+	Node *fast = head;
+
+	while (slow != NULL && fast != NULL) {
+		slow = slow->next;
+		fast = fast->next;
+
+		// fast ptr is at end of list
+		if (fast->next == NULL) {
+			return 0;
+		}
+
+		fast = fast->next;
+
+		if (slow == fast) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+/*
+Node* MReverse(Node *head)
+{
+	Node *c = head;
+	if (!c || !c->next) {
+		return c;
+	}
+
+	Node *n = c->next;
+	Node *nn;
+	c->next = NULL;
+	while (n->next) {
+		nn = n->next;
+		n->next = c;
+		c = n;
+		n = nn;
+	}
+	return n;
+}
+
+int FindMergeNode(Node *headA, Node *headB)
+{
+	Node *revA = MReverse(headA);
+	Node* revB = MReverse(headB);
+
+	while (revA && revB && revA->next && revB->next) {
+		if (revA->next != revB->next) {
+			return revA->data;
+		}
+	}
+	return NULL;
+}
+*/
