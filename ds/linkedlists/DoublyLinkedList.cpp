@@ -6,35 +6,40 @@ struct Node
 	Node *next;
 	Node *prev;
 };
-/*
-Node* SortedInsert(Node *head,int data)
+
+
+Node* SortedInsert(Node *head, int data)
 {
 	Node *n = new Node();
 	n->data = data;
-	n->next = NULL;
-	n->prev = NULL;
 
-	if (head == NULL) {
+	if (head == NULL)
+		return n;
+
+	// special case: new node is new head
+	if (head->data >= data) {
+		n->next = head;
+		head->prev = n;
 		return n;
 	}
 
+	// is there a way to do this with one pointer?
 	Node *c = head;
-	while (c->data < data && c->next) {
+	Node *p = NULL;
+	while (c && c->data < data) {
+		p = c;
 		c = c->next;
 	}
-	if (c->next) {
-		Node *d = c->next;
-		c->next = n;
-		d->prev = n;
-		n->prev = c;
-		n->next = d;
-	} else {
-		c->next = n;
-		n->prev = c;
-	}
+
+	n->next = c;
+	n->prev = p;
+	p->next = n;
+	if (c)
+		c->prev = n;
+
 	return head;
 }
-*/
+
 
 Node* Reverse(Node *head)
 {

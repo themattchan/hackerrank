@@ -168,36 +168,17 @@ int HasCycle(Node* head)
 	return 0;
 }
 
-/*
-Node* MReverse(Node *head)
-{
-	Node *c = head;
-	if (!c || !c->next) {
-		return c;
-	}
-
-	Node *n = c->next;
-	Node *nn;
-	c->next = NULL;
-	while (n->next) {
-		nn = n->next;
-		n->next = c;
-		c = n;
-		n = nn;
-	}
-	return n;
-}
-
 int FindMergeNode(Node *headA, Node *headB)
 {
-	Node *revA = MReverse(headA);
-	Node* revB = MReverse(headB);
-
-	while (revA && revB && revA->next && revB->next) {
-		if (revA->next != revB->next) {
-			return revA->data;
+	Node *aa = headA;
+	while (aa) {
+		Node *bb = headB;
+		while (bb) {
+			if (aa == bb)
+				return aa->data;
+			bb = bb->next;
 		}
+		aa = aa->next;
 	}
-	return NULL;
+	return 0;
 }
-*/
