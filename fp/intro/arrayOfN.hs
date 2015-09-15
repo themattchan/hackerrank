@@ -1,5 +1,3 @@
-fn n = replicate n 1
+fn = flip replicate 1
 
-main = do
-n <- readLn :: IO Int
-print (length(fn(n)))
+main = readLn >>= print . length . fn
