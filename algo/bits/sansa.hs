@@ -1,5 +1,5 @@
 module Sansa where
-=import Control.Monad
+import Control.Monad
 import Data.Bits (xor)
 
 
