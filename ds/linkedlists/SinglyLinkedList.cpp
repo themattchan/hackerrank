@@ -124,9 +124,10 @@ int GetNode(Node *head, int positionFromTail)
 
 	n = head;
 
-	while(len--) {
+	while (len--) {
 		n = n->next;
 	}
+
 	return n->data;
 }
 
@@ -158,15 +159,13 @@ int HasCycle(Node* head)
 		fast = fast->next;
 
 		// fast ptr is at end of list
-		if (fast->next == NULL) {
+		if (fast->next == NULL)
 			return 0;
-		}
 
 		fast = fast->next;
 
-		if (slow == fast) {
+		if (slow == fast)
 			return 1;
-		}
 	}
 	return 0;
 }
@@ -183,6 +182,7 @@ int FindMergeNode(Node *headA, Node *headB)
 		while (bb) {
 			if (aa == bb)
 				return aa->data;
+
 			bb = bb->next;
 		}
 		aa = aa->next;
