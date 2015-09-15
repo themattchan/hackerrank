@@ -1,5 +1,4 @@
 #lang racket
-(require rnrs/arithmetic/bitwise-6)
 
 (define (MSB-exp n)
   (- (integer-length n) 1))
@@ -12,7 +11,8 @@
     (let* ((ehi (MSB-exp hi))
            (elo (MSB-exp lo))
            (p   (pow2 ehi)))
-      (if (not (eq? ehi elo))                 
+      (if (or (and (zero? hi) (zero? lo))
+              (not (eq? ehi elo)))
           a
         (go (- hi p) (- lo p) (+ a p)))))
   (go hi lo 0))
