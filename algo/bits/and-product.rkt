@@ -4,20 +4,20 @@
 (define (MSB-exp n)
   (- (integer-length n) 1))
 
-(define (go d pows)
-  (if (or (null? pows)
-          (> d (car pows)))
-      '(0)
-      (cons (car pows) (go d (cdr pows)))))
+(define (pow2 e)
+  (expt 2 e))
 
-(define (and-product lo hi MSB-exp)
-  (let* ((es (for/list ((i (in-range MSB-exp 0 -1))) i))
-         (pow2 (map (curry expt 2) es))
-         (diff (- hi lo)))    
-    (apply + (go diff pow2))))
-
+(define (and-product hi lo)
+  (define (go hi lo a)
+    (let* ((ehi (MSB-exp hi))
+           (elo (MSB-exp lo))
+           (p   (pow2 ehi)))
+      (if (not (eq? ehi elo))                 
+          a
+        (go (- hi p) (- lo p) (+ a p)))))
+  (go hi lo 0))
 
 (for ((i (read)))
   (let ((lo (read))
         (hi (read)))
-    (displayln (and-product lo hi (MSB-exp hi)))))
+    (displayln (and-product lo hi))))
