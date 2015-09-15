@@ -54,7 +54,7 @@ void Inorder(node *root)
 	if (isLeaf(root)) return;
 }
 
-int height(node * root)
+int height(node *root)
 {
 	if (isLeaf(root))
 		return 1;
@@ -67,7 +67,7 @@ int height(node * root)
 	if (root->right)
 		r = height(root->right);
 
-	return max(l+1,r+1);
+	return max(l+1, r+1);
 }
 
 void go_left(node *root) {
@@ -76,7 +76,7 @@ void go_left(node *root) {
 	printf("%d ", root->data);
 }
 
-void top_view(node * root)
+void top_view(node *root)
 {
 	go_left(root);
 
@@ -88,7 +88,7 @@ void top_view(node * root)
 	}
 }
 
-void LevelOrder(node * root)
+void LevelOrder(node *root)
 {
 	queue<node*> q;
 	q.push(root);
@@ -104,7 +104,7 @@ void LevelOrder(node * root)
 }
 
 
-node* insert(node * root, int value)
+node* insert(node *root, int value)
 {
 	node *n = root;
 
