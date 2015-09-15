@@ -23,12 +23,13 @@ Node* InsertTail(Node *head,int data)
 	if (qn == NULL) {
 		return nn;
 	}
+
 	while (qn->next != NULL) {
 		qn = qn->next;
 	}
 	qn->next = nn;
-	return head;
 
+	return head;
 }
 
 Node* InsertHead(Node *head,int data)
@@ -78,16 +79,19 @@ void ReversePrint(Node *head)
 
 int CompareLists(Node *headA, Node* headB)
 {
-	if (headA == NULL && headB == NULL) {
+	if (headA == NULL && headB == NULL)
 		return 1;
-	} else if ((headA == NULL && headB != NULL) ||
-			   (headA != NULL && headB == NULL)) {
+
+	else if ((headA == NULL && headB != NULL) ||
+			 (headA != NULL && headB == NULL))
 		return 0;
-	} else if (headA->data == headB->data) {
-		return	CompareLists(headA->next, headB->next);
-	} else {
+
+	else if (headA->data == headB->data)
+		return CompareLists(headA->next, headB->next);
+
+	else
 		return 0;
-	}
+
 }
 
 Node* MergeLists(Node *headA, Node* headB)
@@ -107,7 +111,7 @@ Node* MergeLists(Node *headA, Node* headB)
 	}
 }
 
-int GetNode(Node *head,int positionFromTail)
+int GetNode(Node *head, int positionFromTail)
 {
 	Node *n = head;
 	int len = 0;
@@ -133,13 +137,12 @@ Node* RemoveDuplicates(Node *head)
 	}
 
 	Node *nn = head;
-	while (nn->next != NULL) {
-		while (nn->next != NULL && nn->data == nn->next->data) {
+	while (nn->next) {
+		while (nn->next && nn->data == nn->next->data)
 			nn->next = nn->next->next;
-		}
-		if (nn->next != NULL) {
+
+		if (nn->next)
 			nn = nn->next;
-		}
 	}
 	return head;
 }
