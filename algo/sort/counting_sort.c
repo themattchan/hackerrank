@@ -73,8 +73,6 @@ void problem3(void)
 	}
 }
 
-const char *BLANK = "- ";
-
 void problem4(void)
 {
 	int size;
@@ -95,7 +93,7 @@ void problem4(void)
 
 		if (i < size/2) {
 			scanf("%*[^\n]");		/* discard the word */
-			strcat(ar[j], BLANK);
+			strcat(ar[j], "- ");
 		} else {
 			char buf[10] = "";
 			scanf("%s", buf);
