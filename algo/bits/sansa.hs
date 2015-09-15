@@ -11,7 +11,7 @@ Notice two properties of xor:
 * Associativity: a `xor` (b `xor` c) == (a `xor` b) `xor` c
 * Commutativity: a `xor` b == b `xor` a
 
-Together these properties give us freedom in recombining xor operations as we
+Together these properties give us freedom in reordering xor operations as we
 wish.
 
 Also:
