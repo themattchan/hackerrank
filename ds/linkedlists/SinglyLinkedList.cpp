@@ -168,6 +168,10 @@ int HasCycle(Node* head)
 	return 0;
 }
 
+/* This is a disgusting O(n^2).
+ * Reverse + zip will work if their ptrs were not
+ * shared and we were only comparing data.
+ */
 int FindMergeNode(Node *headA, Node *headB)
 {
 	Node *aa = headA;
