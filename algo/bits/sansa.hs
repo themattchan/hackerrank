@@ -84,8 +84,8 @@ sublistXor xs =
 
 main :: IO ()
 main = do
-  gos <- readLn
-  replicateM_ gos $ do
+  n <- readLn
+  replicateM_ n $ do
     getLine
-    ns <- getLine >>= return . map read . words
-    print $ sublistXor ns
+    xs <- getLine >>= return . map read . words
+    print $ sublistXor xs
