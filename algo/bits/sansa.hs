@@ -60,11 +60,11 @@ For 0-indexed:
 So for an element at index i in a list of length N, it is repeated (N-i) * (i+1)
 times in the subarrays.
 
-By commutativity, we do not have to do the xors by subarray order, but can do them
-in sequential order: that is, for each number at index i, xor it with itself
-times, then xor the whole list.
+By commutativity, we do not have to do the xors by subarray order, but can do
+them in sequential order: that is, for each number at index i, xor it with
+itself (N-i) * (i+1) times (using the even/odd property), then xor the whole list.
 
-Combining it into a fold would be even more efficient!
+Finally, fuse the self-xor and list-xor into a fold!
 
 -}
 
