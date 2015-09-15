@@ -18,6 +18,4 @@
   (go hi lo 0))
 
 (for ((i (read)))
-  (let ((lo (read))
-        (hi (read)))
-    (displayln (and-product lo hi))))
+  (displayln (and-product (read) (read))))
