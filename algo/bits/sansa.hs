@@ -1,5 +1,5 @@
 module Sansa where
-import Control.Monad
+=import Control.Monad
 import Data.Bits (xor)
 
 
@@ -71,7 +71,7 @@ Notice that the sequence has a odd/even/odd pattern.
 
 Actually, it depends on the length of the list:
   odd length:  odd, even, odd...
-  even length: even, odd, even...
+  even length: even, even, even... (all 0)
 
 Use this property instead of calculating the sum.
 ----------
@@ -95,6 +95,11 @@ sublistXor xs =
       acc        = (0, 0) -- index, accum
   in snd $ foldr go acc xs
 
+
+sublistXor' :: [Integer] -> Integer
+sublistXor' xs
+  | even (length xs) = 0
+  | otherwise        = foldr xor 0 $ zipWith (*) xs (cycle [1,0])
 
 main :: IO ()
 main = do
