@@ -163,3 +163,23 @@ void decode_huff(node *root, string s)
 		}
 	}
 }
+
+node* lca(node *root, int v1, int v2)
+{
+	if (root == NULL)
+		return root;
+
+	int d = root->data;
+
+	if (d == v1 || d == v2)
+		return root;
+
+	else if ((v1 < d && v2 > d) || (v1 > d && v2 < d))
+		return root;
+
+	else if (v1 < d && v2 < d)
+		return lca(root->left, v1, v2);
+
+	else
+		return lca(root->right, v1, v2);
+}
