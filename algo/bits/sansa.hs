@@ -37,13 +37,13 @@ We count with the following table (idx down, subarray len across):
   # occs in subarray of length n
 # | 1 2 3 4 5 6 7  SUM
 ------------------------
-1 | 1 1 1 1 1 1 1   7
-2 | 1 2 2 2 2 2 1   12
-3 | 1 2 3 3 3 2 1   15
-4 | 1 2 3 4 3 2 1   16
-5 | 1 2 3 3 3 2 1   15
-6 | 1 2 2 2 2 2 1   12
-7 | 1 1 1 1 1 1 1   7
+1 | 1 1 1 1 1 1 1   7           -- odd
+2 | 1 2 2 2 2 2 1   12          -- even
+3 | 1 2 3 3 3 2 1   15          -- odd
+4 | 1 2 3 4 3 2 1   16          -- even
+5 | 1 2 3 3 3 2 1   15          -- odd
+6 | 1 2 2 2 2 2 1   12          -- even
+7 | 1 1 1 1 1 1 1   7           -- odd
 
 Let's examine the sequence of sums:
 
@@ -64,9 +64,22 @@ By commutativity, we do not have to do the xors by subarray order, but can do
 them in sequential order: that is, for each number at index i, xor it with
 itself (N-i) * (i+1) times (using the even/odd property), then xor the whole list.
 
+----------
+ADDENDUM: (does this work?)
+
+Notice that the sequence has a odd/even/odd pattern.
+
+Actually, it depends on the length of the list:
+  odd length:  odd, even, odd...
+  even length: even, odd, even...
+
+Use this property instead of calculating the sum.
+----------
+
 Finally, fuse the self-xor and list-xor into a fold!
 
 -}
+
 
 -- xor an integer by itself n times
 xorN :: Int -> Integer -> Integer
@@ -81,6 +94,7 @@ sublistXor xs =
                    in (i+1, a')
       acc        = (0, 0) -- index, accum
   in snd $ foldr go acc xs
+
 
 main :: IO ()
 main = do
