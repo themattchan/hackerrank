@@ -64,18 +64,6 @@ By commutativity, we do not have to do the xors by subarray order, but can do
 them in sequential order: that is, for each number at index i, xor it with
 itself (N-i) * (i+1) times (using the even/odd property), then xor the whole list.
 
-----------
-ADDENDUM: (does this work?)
-
-Notice that the sequence has a odd/even/odd pattern.
-
-Actually, it depends on the length of the list:
-  odd length:  odd, even, odd...
-  even length: even, even, even... (all 0)
-
-Use this property instead of calculating the sum.
-----------
-
 Finally, fuse the self-xor and list-xor into a fold!
 
 -}
@@ -96,10 +84,23 @@ sublistXor xs =
   in snd $ foldr go acc xs
 
 
+{-
+ADDENDUM:
+
+Notice that the sequence has a odd/even/odd pattern.
+
+Actually, it depends on the length of the list:
+  odd length:  odd, even, odd...   (drop even indexed elems)
+  even length: even, even, even... (all 0)
+
+Use this property instead of calculating the sum.
+-}
+
 sublistXor' :: [Integer] -> Integer
 sublistXor' xs
   | even (length xs) = 0
   | otherwise        = foldr xor 0 $ zipWith (*) xs (cycle [1,0])
+
 
 main :: IO ()
 main = do
@@ -107,4 +108,4 @@ main = do
   replicateM_ n $ do
     getLine
     xs <- getLine >>= return . map read . words
-    print $ sublistXor xs
+    print $ sublistXor' xs
