@@ -81,10 +81,7 @@ void top_view(node * root)
 	go_left(root);
 
 	// go right
-	node *r = NULL;
-	if (root->right)
-		r = root->right;
-
+	node *r = root->right;
 	while (r) {
 		printf("%d ", r->data);
 		r = r->right;
