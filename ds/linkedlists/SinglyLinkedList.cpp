@@ -137,11 +137,11 @@ Node* RemoveDuplicates(Node *head)
 	}
 
 	Node *nn = head;
-	while (nn->next) {
-		while (nn->next && nn->data == nn->next->data)
+	while (nn->next != NULL) {
+		while (nn->next != NULL && nn->data == nn->next->data)
 			nn->next = nn->next->next;
 
-		if (nn->next)
+		if (nn->next != NULL)
 			nn = nn->next;
 	}
 	return head;
