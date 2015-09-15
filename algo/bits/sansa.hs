@@ -48,7 +48,7 @@ We count with the following table (idx down, subarray len across):
 Let's examine the sequence of sums:
 
 idx  1     2     3      4      5      6      7
-SUM  1     12    15     16     15     12     7
+SUM  7     12    15     16     15     12     7
      7*1   6*2   5*3    4*4    3*5    2*6    1*7
      Ni   (N-1)i (N-2)i (N-3)i (N-4)i (N-5)i (N-6)i
 
