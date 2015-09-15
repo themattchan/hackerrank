@@ -20,6 +20,6 @@ int main()
 		time[1] += 2;
 	}
 
-	printf("%s",time);
+	printf("%s", time);
     return 0;
 }
