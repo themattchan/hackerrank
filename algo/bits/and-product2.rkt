@@ -35,14 +35,12 @@
         
         ; two 1s, add msb
         ((and (is1? (car hs)) (is1? (car ls)))
-         (go (cons msb a) (sub1 msb) (cdr hs) (cdr ls)))
+         (go (+ a (pow2 msb)) (sub1 msb) (cdr hs) (cdr ls)))
         
         ; 0 1 pair, return
         (else a)))
-    
-  (foldl (λ (x a) (+ a (pow2 x))) 
-         0
-         (go '() (sub1 (length hs)) hs ls)))
+ 
+  (go 0 (sub1 (length hs)) hs ls))
 
 (for ((i (read)))
      (displayln (and-product (read) (read))))
