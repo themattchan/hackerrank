@@ -44,3 +44,5 @@
 
 (for ((i (read)))
      (displayln (and-product (read) (read))))
+
+; a very constant .0.25s for every test case!
