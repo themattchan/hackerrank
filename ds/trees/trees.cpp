@@ -152,7 +152,7 @@ void decode_huff(node *root, string s)
 {
 	node *n = root;
 	for (int i = 0; i < s.size(); i++) {
-		if (s.at(i) == '0')
+		if (s[i] == '0')
 			n = n->left;
 		else
 			n = n->right;

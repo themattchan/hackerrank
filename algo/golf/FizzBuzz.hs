@@ -1,0 +1,1 @@
+--main=mapM(\x->putStrLn$[show x,"Fizz","Buzz","FizzBuzz"]!!min(div(gcd 15x)2)3)[1..100]
