@@ -1,5 +1,6 @@
 #lang racket
 
+; this is O(nlogn + n) because of the sort
 (define nums
   (sort (for/list ([i (read)]) (read))
         <))
