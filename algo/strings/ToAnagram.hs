@@ -1,18 +1,19 @@
 module ToAnagram where
 import Data.List
+import Data.Ord
 
-toFreqList :: String -> [(Char, Int)]
-toFreqList  s = let fs = group . sort $ s
-                    go a [] _          = a
-                    go a (c:cs) (f:fs) = if head f == c
-                                         then go ((c, length f):a) cs fs
-                                         else go ((c,0):a) cs (f:fs)
-                    go a (c:cs) fs     = go ((c,0):a) cs fs
-                in go [] ['a'..'z'] fs
+toCounts :: String -> [Int]
+toCounts  s = let fs       = group . sort $ s
+                  chars    = map head fs
+                  freqs    = map length fs
+                  missings = ['a'..'z'] \\ chars
+              in map snd . sortBy (comparing fst) $
+                 zip chars freqs ++ zip missings (repeat 0)
+
 
 makeAnagram :: String -> String -> Int
-makeAnagram a b = let fa = map snd $ toFreqList a
-                      fb = map snd $ toFreqList b
+makeAnagram a b = let fa = toCounts a
+                      fb = toCounts b
                   in sum . map abs $ zipWith (-) fa fb
 
 main :: IO ()
