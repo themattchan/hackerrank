@@ -1,4 +1,4 @@
-from itertools import *
+from itertools import product
 
 # observe that
 # [f(x%m)]%m == [f(x)]%m
@@ -7,4 +7,4 @@ from itertools import *
 
 (k,m) = tuple(map(int, raw_input().split()))
 lists = [set(map(lambda x: int(x)%m, raw_input().split()[1:])) for _ in range(k)]
-print max([sum(map(lambda x:x*x, comb))%m for comb in product(*lists)])
+print max([sum(map(lambda x: x*x, comb))%m for comb in product(*lists)])
