@@ -8,5 +8,5 @@ def isValid(email):
     x = len(e[2]) >= 1 and len(e[2]) <= 3 and re.search(r'[^\A-Za-z]+',e[2]) == None
     return u and w and x
 
-emails = [raw_input() for i in range(input())]
+emails = [raw_input() for _ in range(input())]
 print sorted(filter(isValid,emails))
