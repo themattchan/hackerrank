@@ -1,6 +1,6 @@
 mins :: [String]
-mins = [
-   ""
+mins =
+ [  ""
  , "one"
  , "two"
  , "three"
@@ -20,7 +20,8 @@ mins = [
  , "seventeen"
  , "eighteen"
  , "nineteen"
- , "twenty"]
+ , "twenty"
+ ]
 
 hours :: [String]
 hours = (take 13 mins) ++ ["one"]
