@@ -1,6 +1,6 @@
 mins :: [String]
 mins =
- [  ""
+ [ ""
  , "one"
  , "two"
  , "three"
