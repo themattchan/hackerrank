@@ -6,7 +6,7 @@
 int main()
 {
 	int n,k,q;
-	scanf("%d",&n); 			/* arr size */
+	scanf("%d",&n);				/* arr size */
 	scanf("%d",&k);				/* k rotations, but only rotate %n, */
 	k %= n;
 	scanf("%d",&q);				/* queries */
@@ -21,5 +21,5 @@ int main()
 		scanf("%d",&t);
 		printf("%d\n",a[(n-k+t)%n]); /* 0-th elem for k rots is (n-k)%n */
 	}
-    return 0;
+	return 0;
 }
