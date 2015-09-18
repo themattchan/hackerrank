@@ -3,8 +3,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-int main() {
-
+int main()
+{
 	int n,k,q;
 	scanf("%d",&n); 			/* arr size */
 	scanf("%d",&k);				/* k rotations, but only rotate %n, */
