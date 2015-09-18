@@ -7,9 +7,10 @@ int main() {
 
 	int n,k,q;
 	scanf("%d",&n); 			/* arr size */
-	scanf("%d",&k);				/* k rotations, but only rotate %n */
+	scanf("%d",&k);				/* k rotations, but only rotate %n, */
 	k %= n;
 	scanf("%d",&q);				/* queries */
+
 	int a[n];
 	for (int i = 0; i < n; i++) {
 		scanf("%d", &a[i]);
