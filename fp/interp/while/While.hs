@@ -10,7 +10,6 @@ import Text.Parsec.String
 
 -- TYPES
 type Variable = String
-type Value = Int
 
 data Stmt
   = Assign Variable AExpr
@@ -32,7 +31,7 @@ data RelOp
   deriving (Show)
 
 data AExpr
-  = Val Value
+  = Val Int
   | Var Variable
   | AApp ArithOp AExpr AExpr
   deriving (Show)
@@ -45,3 +44,6 @@ data BExpr
 
 -- This is the state of the interpreter
 type Store = Map Variable Value
+
+evalBExpr :: BExpr -> State Store Bool
+evalBExpr TRUE = return
