@@ -43,8 +43,7 @@
   (define (reachable n)
     (define (step-maybe-jump x)
       (assoc-with-default (+ x n) (+ x n) snake-ladders))
-    (define (lte-100 x) (<= x 100))
-    (filter lte-100 (map step-maybe-jump (range 1 7))))
+    (filter (curryr <= 100) (map step-maybe-jump (range 1 7))))
 
   (map (λ (n) (list n (reachable n)))
        (range 1 101)))
