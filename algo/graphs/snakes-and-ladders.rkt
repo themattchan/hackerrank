@@ -11,7 +11,7 @@
     (make-vector 110 +inf.0))
   
   (define (node<=? n1 n2)
-    (<=  (vector-ref dist n1) (vector-ref dist n2)))
+    (<= (vector-ref dist n1) (vector-ref dist n2)))
   
   (define (dijkstra1 heap)
     (when (not (zero? (vector-length heap)))    
@@ -53,14 +53,11 @@
           (ls (for/list ((_ (read))) (cons (read) (read)))))
       (append ss ls)))
 
-(define (read-board)
-  (gen-board (read-snakes-ladders)))
-
 (define (guard-invalid x)
   (if (= x +inf.0) -1 x))
 
 (for ((i (read)))
-  (let* ((board (read-board))
+  (let* ((board (gen-board (read-snakes-ladders)))
          (dist (dijkstra board 1)))
   (displayln 
    (guard-invalid 
