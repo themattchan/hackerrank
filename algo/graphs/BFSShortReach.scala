@@ -11,7 +11,7 @@ object BFSShortReach {
     def bfs(): Array[Int] = {
       val bfsRet: Array[Option[Int]] = Array.fill(numNodes+1) {None}
 
-      var Q = Queue[Int]()
+      val Q = Queue[Int]()
 
       bfsRet(start) = Some(0)
       Q.enqueue(start)
