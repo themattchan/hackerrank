@@ -9,24 +9,24 @@ object BFSShortReach {
     val INFINITY = -1
 
     def bfs(): Array[Int] = {
-      val bfsRet: Array[Option[Int]] = Array.fill(numNodes+1) {None}
+      val dist: Array[Option[Int]] = Array.fill(numNodes+1) {None}
 
       val Q = Queue[Int]()
 
-      bfsRet(start) = Some(0)
+      dist(start) = Some(0)
       Q.enqueue(start)
 
       while (!Q.isEmpty) {
         val cur = Q.dequeue
         for (adj <- graph(cur)) {
-          if (bfsRet(adj).isEmpty) {
-            bfsRet(adj) = bfsRet(cur).map(_ + edgeLength)
+          if (dist(adj).isEmpty) {
+            dist(adj) = dist(cur).map(_ + edgeLength)
             Q.enqueue(adj)
           }
         }
       }
 
-      bfsRet.tail.map(_.getOrElse(INFINITY)).filterNot(_ == 0)
+      dist.tail.map(_.getOrElse(INFINITY)).filterNot(_ == 0)
     }
 
   }
