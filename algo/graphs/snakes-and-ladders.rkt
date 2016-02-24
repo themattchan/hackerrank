@@ -26,7 +26,7 @@
         (heap-sort! rest node<=?)
         (dijkstra1 rest))))
   
-  (define to-visit (list->vector (range 1 100)))
+  (define to-visit (list->vector graph-nodes))
   (vector-set! dist start 0)
   (heap-sort! to-visit node<=?)
   (dijkstra1 to-visit)
