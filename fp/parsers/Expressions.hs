@@ -31,6 +31,7 @@ data Expr =
   | Div Expr Expr
   | Pos Expr
   | Neg Expr
+  deriving (Eq, Show)
 
 -- cribbed from
 -- https://hackage.haskell.org/package/parsec-3.1.9/docs/Text-Parsec-Expr.html

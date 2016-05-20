@@ -12,3 +12,4 @@ data Expr =
   | Sub Expr Expr
   | Add Expr Expr
   | Pow Expr Expr
+  deriving (Eq, Show)
