@@ -20,7 +20,7 @@ edit st@(acts, buf, buflen) op = case op of
   Append n w -> return (op:acts, buf++w, buflen+n)
   Delete n _ -> let (keep,del) = splitAt (buflen-n) buf in
                   return ((Delete n del):acts, keep, buflen-n)
-  Print i    -> do putStrLn [buf !! i,'\n']
+  Print i    -> do putStrLn [buf !! i]
                    return st
   Undo       -> case acts of
     (Delete n w):acts -> return (acts, buf++w, buflen+n)
@@ -31,8 +31,8 @@ edit st@(acts, buf, buflen) op = case op of
 parseOp :: String -> Op
 parseOp s = case words s of
     "1":w:_ -> Append (length w) w
-    "2":k:_ -> Delete (read k) ""
-    "3":k:_ -> Print (read k)
+    "2":k:_ -> Delete (read k -1) ""
+    "3":k:_ -> Print (read k -1)
     "4":_   -> Undo
     _       -> undefined
 
