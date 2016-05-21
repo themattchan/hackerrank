@@ -12,7 +12,7 @@
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
-#include <queue>
+#include <stack>
 
 /*
   Use this function to write data to socket
@@ -25,34 +25,42 @@ using namespace std;
 
 struct Node {
 	int id;
-	int parent;
-	int dist;
+	Node* parent;
 };
 typedef struct Node Node;
 
 typedef unordered_map<int, unordered_set<int>> Graph;
 
-unique_ptr<Graph> topology;
+unique_ptr<unordered_map<int,Node*>> topology;
 
 /*
   This function is called only once before any client connection is accepted by
   the server. Read any global datasets or configurations here.
 */
+bool is_root(Node* node)
+{
+	return node->parent == nullptr;
+}
 
 void init_server()
 {
-	topology = unique_ptr<Graph>(new Graph());
+	topology = unique_ptr<unordered_map<int,Node*>>();
 
 	FILE *topo = fopen("training.txt", "r");
-	int size;
-	fscanf(topo, "%d", &size);
-	for (int i = 0; i < size; i++) {
-		int from, to;
-		fscanf(topo, "%d,%d", &from, &to);
-		auto& dir1 = (*topology)[from];
-		dir1.insert(to);
-		auto& dir2 = (*topology)[to];
-		dir2.insert(from);
+	int N;
+	fscanf(topo, "%d", &N);
+	for (int i = 1; i <= N; i++) {
+		Node *node = new Node();
+		node->id = i;
+		node->parent = nullptr;
+	}
+
+	for (int i = 0; i < N; i++) {
+		int parent, child;
+		fscanf(topo, "%d,%d", &parent, &child);
+		auto& child_node = (*topology)[child];
+		auto& parent_node = (*topology)[parent];
+		child_node->parent = parent_node;
 	}
 
 	fclose(topo);
@@ -60,30 +68,27 @@ void init_server()
 
 bool exists_path(int src, int dst, int hops)
 {
-	if (src == dst) return true;
+	Node* src_node = (*topology)[src];
+	Node* dst_node = (*topology)[dst];
 
-	unordered_map<int,Node> seens;
-	queue<Node> Q;
-	Node root = { .id = src, .parent = src, .dist = 1 };
-	Q.push(root);
-	while (!Q.empty()) {
-		Node cur = Q.front();
-		seens[cur.id] = cur;
-		Q.pop();
-		auto adjs = (*topology)[cur.id];
-		for (auto it = adjs.begin(); it != adjs.end(); it++) {
-			if (seens.find(*it) == seens.end()) {
-				Node n = { .id = *it, .parent = cur.id, .dist = cur.dist+1 };
-				if (n.id == dst) {
-					if (n.dist <= hops) return true;
-					else return false;
-				}
+	stack<Node**> src_path;
+	stack<Node**> dst_path;
 
-				Q.push(n);
-			}
-		}
+	while (!is_root(src_node)) {
+		src_path.push(&src_node);
+		src_node = src_node->parent;
 	}
-	return false;
+	while (!is_root(dst_node)) {
+		dst_path.push(&dst_node);
+		dst_node = dst_node->parent;
+	}
+	while (src_path.top() == dst_path.top()) {
+		src_path.pop();
+		dst_path.pop();
+	}
+
+	int path_len = src_path.size() + dst_path.size() +1;
+	return hops <= path_len;
 }
 
 /*
