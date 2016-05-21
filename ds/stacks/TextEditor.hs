@@ -31,7 +31,7 @@ edit st@(acts, buf, buflen) op = case op of
 parseOp :: String -> Op
 parseOp s = case words s of
     "1":w:_ -> Append (length w) w
-    "2":k:_ -> Delete (read k -1) ""
+    "2":k:_ -> Delete (read k) ""
     "3":k:_ -> Print (read k -1)
     "4":_   -> Undo
     _       -> undefined
