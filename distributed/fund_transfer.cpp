@@ -45,8 +45,8 @@ bool is_root(Node* node)
 void init_server()
 {
 	topology = unique_ptr<unordered_map<int,Node*>>();
-
 	FILE *topo = fopen("training.txt", "r");
+
 	int N;
 	fscanf(topo, "%d", &N);
 	for (int i = 1; i <= N; i++) {
@@ -87,7 +87,10 @@ bool exists_path(int src, int dst, int hops)
 		dst_path.pop();
 	}
 
-	int path_len = src_path.size() + dst_path.size() +1;
+	// +2 for last set popped, +1 for their distance calculation method
+	// (nodes not edges)
+	int path_len = src_path.size() + dst_path.size() + 3;
+
 	return hops <= path_len;
 }
 
