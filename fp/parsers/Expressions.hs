@@ -1,4 +1,4 @@
---import Control.Applicative hiding (<|>)
+import Control.Applicative hiding ((<|>))
 import Text.Parsec
 import Text.Parsec.String
 import Text.Parsec.Expr
@@ -39,21 +39,21 @@ data Expr =
 expr :: Parser Expr
 expr = buildExpressionParser optable factor
   where
-    binary  name fun = Infix   ( reservedOp haskell name >> return fun ) AssocLeft
-    prefix  name fun = Prefix  $ reservedOp haskell name >> return fun
-    postfix name fun = Postfix $ reservedOp haskell name >> return fun
+    binary name fun = Infix  (eatSpaces (string name) >> return fun) AssocRight
+    prefix name fun = Prefix (eatSpaces (string name) >> return fun)
     -- tightest binding first
-    optable = [ prefix "-" Neg
-              , prefix "+" Pos
-              , binary "*" Mul
-              , binary "/" Div
-              , binary "+" Add
-              , binary "-" Sub
+    optable = [ [prefix "-" Neg, prefix "+" Pos]
+              , [binary "*" Mul, binary "/" Div]
+              , [binary "+" Add, binary "-" Sub]
               ]
 
-factor = paren <|> num <|> spaces
-  where paren = between (char '(') (char ')') expr
-        num   = Num (read <$> many1 digit)
+eatSpaces :: Parser a -> Parser a
+eatSpaces p = spaces *> p <* spaces
+
+factor = try paren <|> num
+  where paren = between (char '(') (char ')')
+                        (eatSpaces expr)
+        num   = Num . read <$> (eatSpaces $ many1 digit)
 
 doParse s = case parse expr "" s of
   Left _  -> Nothing
@@ -61,17 +61,19 @@ doParse s = case parse expr "" s of
 
 eval :: Expr -> Integer
 eval expr = case expr of
-  Num i     -> i `mod` bigmod
-  Add e1 e2 -> (eval e1 + eval e2) `mod` bigmod
-  Sub e1 e2 -> (eval e1 - eval e2) `mod` bigmod
-  Mul e1 e2 -> (eval e1 * eval e2) `mod` bigmod
-  Div e1 e2 -> (eval e1 `div` eval e2) `mod` bigmod
+  Num i     -> toInteger i `mod` bigmod
+  Add e1 e2 -> ((eval e1 `mod` bigmod) + (eval e2 `mod` bigmod)) `mod` bigmod
+  Sub e1 e2 -> ((eval e1 `mod` bigmod) - (eval e2 `mod` bigmod)) `mod` bigmod
+  Mul e1 e2 -> ((eval e1 `mod` bigmod) * (eval e2 `mod` bigmod)) `mod` bigmod
+  Div e1 e2 -> error "TODO"
   Pos e     -> (eval e) `mod` bigmod
   Neg e     -> (negate $ eval e)  `mod` bigmod
 
 
-bigmod = 1000000007 :: Integer
+bigmod = 1000000007
 
 main = do
-  Just e <- getLine >>= doParse
-  putStrLn . show . eval $ e
+  s <- getLine
+  let Just e = doParse s
+  print e
+  print . eval $ e

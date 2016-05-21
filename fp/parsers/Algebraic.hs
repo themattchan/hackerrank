@@ -25,3 +25,11 @@ instance Show Expr where
     Pow e1 e2 -> show e1 ++ "^" ++ show e2
 
 simpl :: Expr -> Expr
+simpl e = case e of
+  Var c     -> e
+  Num i     -> e
+  Mul e1 e2 ->
+  Div e1 e2 ->
+  Sub e1 e2 ->
+  Add e1 e2 ->
+  Pow e1 e2 ->
