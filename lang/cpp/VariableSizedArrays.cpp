@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #define foreach(var,until) for(int var = 0; var < until; var++)
-#define SIZE 100000
 
 using namespace std;
 
