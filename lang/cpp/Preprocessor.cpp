@@ -5,9 +5,9 @@
 #define io cin >>
 #define FUNCTION(name, a) void name(int& m, int v) { m a v ? v : m = v; }
 
-#define foreach(container, var)									\
-	for (int var = 0;											\
-		 var < (container).size();								\
+#define foreach(container, var)					\
+	for (int var = 0;							\
+		 var < (container).size();				\
 		 ++var)
 
 #include <iostream>
