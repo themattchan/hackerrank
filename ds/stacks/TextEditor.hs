@@ -7,7 +7,6 @@ data Rope = Leaf Int String    -- length of stored string
           | Node Int Rope Rope -- length of left string
 
 
-
 data Op = Append Int String | Delete Int String -- save
         | Print Int | Undo -- ignore
 
@@ -15,6 +14,7 @@ type State = ([Op], String, Int)
 
 newState = ([], "", 0)
 
+-- really inefficient to actually append...
 edit :: State -> Op -> IO State
 edit st@(acts, buf, buflen) op = case op of
   Append n w -> return (op:acts, buf++w, buflen+n)
@@ -30,11 +30,11 @@ edit st@(acts, buf, buflen) op = case op of
 
 parseOp :: String -> Op
 parseOp s = case words s of
-    "1":w:_ -> Append (length w) w
-    "2":k:_ -> Delete (read k) ""
-    "3":k:_ -> Print (read k -1)
-    "4":_   -> Undo
-    _       -> undefined
+  "1":w:_ -> Append (length w) w
+  "2":k:_ -> Delete (read k) ""
+  "3":k:_ -> Print (read k -1)
+  "4":_   -> Undo
+  _       -> undefined
 
 main :: IO ()
 main = do
