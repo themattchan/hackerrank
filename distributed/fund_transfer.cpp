@@ -20,7 +20,7 @@
   void read_string_from_socket(int sock_descriptor, char** message, uint32_t *length);
 */
 using namespace std;
-typedef unordered_map<int, shared_ptr<unordered_set<int>>> Graph;
+typedef unordered_map<int, unordered_set<int>> Graph;
 
 unique_ptr<Graph> topology;
 
@@ -40,9 +40,9 @@ void init_server()
 		int from, to;
 		fscanf(topo, "%d,%d", &from, &to);
 		auto& dir1 = (*topology)[from];
-		dir1->insert(to);
+		dir1.insert(to);
 		auto& dir2 = (*topology)[to];
-		dir2->insert(from);
+		dir2.insert(from);
 	}
 
 	fclose(topo);
