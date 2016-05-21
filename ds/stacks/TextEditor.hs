@@ -1,6 +1,13 @@
 import Data.List
 import Control.Monad
 
+-- https://en.wikipedia.org/wiki/Rope_(data_structure)
+data RopeRoot = Root Int Rope  -- length of whole string
+data Rope = Leaf Int String    -- length of stored string
+          | Node Int Rope Rope -- length of left string
+
+
+
 data Op = Append Int String | Delete Int String -- save
         | Print Int | Undo -- ignore
 
