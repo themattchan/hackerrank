@@ -12,6 +12,8 @@
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
+#include <queue>
+
 /*
   Use this function to write data to socket
   void write_string_to_socket(int sock_descriptor, char* message, uint32_t length);
@@ -20,6 +22,14 @@
   void read_string_from_socket(int sock_descriptor, char** message, uint32_t *length);
 */
 using namespace std;
+
+struct Node {
+	int id;
+	int parent;
+	int dist;
+};
+typedef struct Node Node;
+
 typedef unordered_map<int, unordered_set<int>> Graph;
 
 unique_ptr<Graph> topology;
@@ -50,7 +60,30 @@ void init_server()
 
 bool exists_path(int src, int dst, int hops)
 {
+	if (src == dst) return true;
 
+	unordered_map<int,Node> seens;
+	queue<Node> Q;
+	Node root = { .id = src, .parent = src, .dist = 1 };
+	Q.push(root);
+	while (!Q.empty()) {
+		Node cur = Q.front();
+		seens[cur.id] = cur;
+		Q.pop();
+		auto adjs = (*topology)[cur.id];
+		for (auto it = adjs.begin(); it != adjs.end(); it++) {
+			if (seens.find(*it) == seens.end()) {
+				Node n = { .id = *it, .parent = cur.id, .dist = cur.dist+1 };
+				if (n.id == dst) {
+					if (n.dist <= hops) return true;
+					else return false;
+				}
+
+				Q.push(n);
+			}
+		}
+	}
+	return false;
 }
 
 /*
@@ -84,15 +117,12 @@ void * process_client_connection(void * ptr)
 
 			printf("Received = %s\n", message);
 
-			if (exists_path(src,dst,hops)) {
-				message = "YES";
-				message_length = 3;
-			} else {
-				message = "NO";
-				message_length = 2;
-			}
+			bool path = exists_path(src,dst,hops);
+		    const char *reply = path ? "YES" : "NO";
+			int reply_len = path? 3:2;
 
-			write_string_to_socket(conn->sock, message, message_length);
+			write_string_to_socket(conn->sock, reply, reply_len);
+
 		} else {
 			terminate_client = 1;
 		}
