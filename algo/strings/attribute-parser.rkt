@@ -6,7 +6,7 @@
   (lambda (s)
     (define spl (string-split s "~"))
     (define path (car spl))
-    (define attr (if (= 2 (length spl)) (cdr spl) '()))
+    (define attr (cdr spl))
 
     `(root
       ,@(map string->symbol (string-split path "."))
