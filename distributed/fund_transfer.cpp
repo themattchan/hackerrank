@@ -64,17 +64,19 @@ int path_len(int src, int dst)
 	stack<int> src_path;
 	stack<int> dst_path;
 
+	if (is_root(src_node))
+        src_path.push(src_node);
 	while (!is_root(src_node)) {
 		src_path.push(src_node);
 		src_node = nodes[src_node];
 	}
-	src_path.push(src_node);
 
+	if (is_root(dst_node))
+		dst_path.push(dst_node);
 	while (!is_root(dst_node)) {
 		dst_path.push(dst_node);
 		dst_node = nodes[dst_node];
 	}
-	dst_path.push(dst_node);
 
 	while (!src_path.empty() && !dst_path.empty() &&
 		   src_path.top() == dst_path.top()) {
@@ -82,12 +84,7 @@ int path_len(int src, int dst)
 		dst_path.pop();
 	}
 
-	if (src_path.size() > 0 && dst_path.size() > 0)
-		path_len += src_path.size() + dst_path.size() + 2;
-	else if (src_path.size() == 0)
-		path_len += dst_path.size();
-	else if (dst_path.size() == 0)
-		path_len += src_path.size();
+	path_len += src_path.size() + dst_path.size();
 
 	return path_len;
 }
