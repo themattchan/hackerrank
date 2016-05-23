@@ -28,12 +28,10 @@ int main()
 	while (n > 0) {
 		memset(str, 0, strlen(str));
 		scanf("%s", str);
-		int b = funny(str);
-		if (b) {
+		if (funny(str))
 			printf("Funny\n");
-		} else {
+		else
 			printf("Not Funny\n");
-		}
 		n--;
 	}
 
