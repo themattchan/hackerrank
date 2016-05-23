@@ -64,15 +64,11 @@ int path_len(int src, int dst)
 	stack<int> src_path;
 	stack<int> dst_path;
 
-	if (is_root(src_node))
-		src_path.push(src_node);
 	while (!is_root(src_node)) {
 		src_path.push(src_node);
 		src_node = nodes[src_node];
 	}
 
-	if (is_root(dst_node))
-		dst_path.push(dst_node);
 	while (!is_root(dst_node)) {
 		dst_path.push(dst_node);
 		dst_node = nodes[dst_node];
