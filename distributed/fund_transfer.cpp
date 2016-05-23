@@ -125,7 +125,7 @@ void * process_client_connection(void * ptr)
 			sscanf(message,"%d%c%d%c%d", &src, &comma, &dst, &comma, &hops);
 
 			bool path = path_len(src,dst) <= hops;
-		    const char *reply = path ? "YES" : "NO";
+			const char *reply = path ? "YES" : "NO";
 			uint32_t reply_len = path ? 3 : 2;
 
 			write_string_to_socket(conn->sock, reply, reply_len);
