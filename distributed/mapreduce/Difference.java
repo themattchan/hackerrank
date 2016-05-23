@@ -1,4 +1,4 @@
-// Author: Shafaet, shafaet@hackerrank.com
+//Author Shafaet, shafaet@hackerrank.com
 import java.util.*;
 import org.json.simple.JSONObject;
 
@@ -11,7 +11,6 @@ class MapReduce {
 		finalResult = new JSONObject();
 		intermediate = new LinkedHashMap();
 	}
-
 	JSONObject execute(JSONObject inputdata) {
 		for (int i = 0; i < inputdata.size(); i++) {
 			LinkedHashMap record = (LinkedHashMap) inputdata.get(i);
@@ -32,33 +31,30 @@ class MapReduce {
 	}
 
 	private void reducer(int key, HashSet value) {
-		// Fill up the question mark in the reducer function!
-		if (value.size() == 1) {
+		List < String > list = new ArrayList < String > (value);
+		if (list.size() == 1 && list.iterator().next().equals("R")) {
 			LinkedHashMap obj = new LinkedHashMap();
 			obj.put("key", key);
 			emit(obj);
 		}
 	}
-
 	private void mapper(LinkedHashMap record) {
 		String value = (String) record.get("value");
 		int key = (int)record.get("key");
 		emitIntermediate(key, value);
 	}
-
 	private void emitIntermediate(int key, String value) {
 		if (!intermediate.containsKey(key))
 			intermediate.put(key, new HashSet());
-
 		HashSet temp = (HashSet) intermediate.get(key);
 		temp.add(value);
 		intermediate.put(key, temp);
 	}
 }
 
-public class Main {
+public class Solution {
 
-	public static void main(String[] args) {
+	public static void main(String[]argh) {
 		JSONObject inputdata = new JSONObject();
 		Scanner sc = new Scanner(System.in);
 		int Nr = sc.nextInt();
@@ -84,7 +80,6 @@ public class Main {
 
 		MapReduce mapred = new MapReduce();
 		JSONObject result = mapred.execute(inputdata);
-
 		for (int i = 0; i < result.size(); i++) {
 			LinkedHashMap record = (LinkedHashMap) result.get(i);
 			System.out.println(record.get("key"));
