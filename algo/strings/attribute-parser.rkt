@@ -3,10 +3,10 @@
          xml/path)
 
 (define (parse-query s)
-    (define spl (string-split s "~"))
-    `(root
-      ,@(map string->symbol (string-split (car spl) "."))
-      ,@(map string->keyword (cdr spl))))
+  (define spl (string-split s "~"))
+  `(root
+    ,@(map string->symbol (string-split (car spl) "."))
+    ,@(map string->keyword (cdr spl))))
 
 (define (read-xml lines)
   (string->xexpr
