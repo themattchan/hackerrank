@@ -9,9 +9,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <memory>
-#include <unordered_map>
-#include <unordered_set>
 #include <stack>
 
 /*
@@ -23,76 +20,74 @@
 */
 using namespace std;
 
-struct Node {
-	int id;
-	Node* parent;
-};
-typedef struct Node Node;
-
-typedef unordered_map<int, unordered_set<int>> Graph;
-
-unique_ptr<unordered_map<int,Node*>> topology;
+int* nodes;
 
 /*
   This function is called only once before any client connection is accepted by
   the server. Read any global datasets or configurations here.
 */
-bool is_root(Node* node)
+bool is_root(int node)
 {
-	return node->parent == nullptr;
+	return nodes[node] == -1;
 }
 
 void init_server()
 {
-	topology = unique_ptr<unordered_map<int,Node*>>();
 	FILE *topo = fopen("training.txt", "r");
 
 	int N;
 	fscanf(topo, "%d", &N);
+
+	nodes = (int*) malloc((N+1) * sizeof(int));
 	for (int i = 1; i <= N; i++) {
-		Node *node = new Node();
-		node->id = i;
-		node->parent = nullptr;
+		nodes[i] = -1;
 	}
 
 	for (int i = 0; i < N; i++) {
 		int parent, child;
-		fscanf(topo, "%d,%d", &parent, &child);
-		auto& child_node = (*topology)[child];
-		auto& parent_node = (*topology)[parent];
-		child_node->parent = parent_node;
+		char comma;
+		fscanf(topo, "%d%c%d", &parent, &comma, &child);
+		nodes[child] = parent;
 	}
 
 	fclose(topo);
 }
 
-bool exists_path(int src, int dst, int hops)
+int path_len(int src, int dst)
 {
-	Node* src_node = (*topology)[src];
-	Node* dst_node = (*topology)[dst];
+	int path_len = 1;
+	if (src == dst) return path_len;
 
-	stack<Node**> src_path;
-	stack<Node**> dst_path;
+	int src_node = src;
+	int dst_node = dst;
+
+	stack<int> src_path;
+	stack<int> dst_path;
 
 	while (!is_root(src_node)) {
-		src_path.push(&src_node);
-		src_node = src_node->parent;
+		src_path.push(src_node);
+		src_node = nodes[src_node];
 	}
 	while (!is_root(dst_node)) {
-		dst_path.push(&dst_node);
-		dst_node = dst_node->parent;
+		dst_path.push(dst_node);
+		dst_node = nodes[dst_node];
 	}
-	while (src_path.top() == dst_path.top()) {
+	while (!src_path.empty() && !dst_path.empty() &&
+		   src_path.top() == dst_path.top()) {
 		src_path.pop();
 		dst_path.pop();
 	}
 
-	// +2 for last set popped, +1 for their distance calculation method
-	// (nodes not edges)
-	int path_len = src_path.size() + dst_path.size() + 3;
+	if (src_path.size() > 0 && dst_path.size() > 0)
+		path_len += src_path.size() + dst_path.size() + 2;
+	else if (src_path.size() == 0)
+		path_len += dst_path.size();
+	else if (dst_path.size() == 0)
+		path_len += src_path.size();
 
-	return hops <= path_len;
+	return path_len;
 }
+
 
 /*
   Write your code here
@@ -116,22 +111,22 @@ void * process_client_connection(void * ptr)
 		uint32_t message_length = 0;
 
 		int src,dst,hops;
+		char comma;
 
 		/* read message */
 		read_string_from_socket(conn->sock, &message, &message_length);
+		printf("Received = %s\n", message);
 
 		if (strcmp(message, "END") != 0) {
-			sscanf(message,"%d,%d,%d", &src, &dst, &hops);
+			sscanf(message,"%d%c%d%c%d", &src, &comma, &dst, &comma, &hops);
 
-			printf("Received = %s\n", message);
-
-			bool path = exists_path(src,dst,hops);
+			bool path = path_len(src,dst) <= hops;
 		    const char *reply = path ? "YES" : "NO";
-			int reply_len = path? 3:2;
+			uint32_t reply_len = path ? 3 : 2;
 
 			write_string_to_socket(conn->sock, reply, reply_len);
-
 		} else {
+			write_string_to_socket(conn->sock, message, message_length);
 			terminate_client = 1;
 		}
 
@@ -144,5 +139,6 @@ void * process_client_connection(void * ptr)
 	fflush(stdout);
 	close(conn->sock);
 	free(conn);
+	free(nodes);
 	pthread_exit(0);
 }
