@@ -42,6 +42,7 @@ void init_server()
 	nodes = (Node*) malloc((N+1) * sizeof(Node));
 	for (int i = 1; i <= N; i++) {
 		nodes[i].parent = -1;
+		nodes[i].transmit_prob = 1;
 	}
 
 	for (int i = 0; i < N; i++) {
@@ -100,21 +101,29 @@ double success_prob(int src, int dst)
 		dst_path.pop();
 	}
 
-	int pow = src_path.size() + dst_path.size();
+	int pow = 2 * (src_path.size() + dst_path.size());
 
 	int prob = 1;
 	while (src_path.size() > 0) {
 		int n = src_path.top();
 		src_path.pop();
 		prob *= nodes[n].transmit_prob;
+		while ((prob / 10) > 0) {
+			prob /= 10;
+			pow--;
+		}
 	}
 	while (dst_path.size() > 0) {
 		int n = dst_path.top();
 		dst_path.pop();
 		prob *= nodes[n].transmit_prob;
+		while ((prob / 10) > 0) {
+			prob /= 10;
+			pow--;
+		}
 	}
 
-	return ((double) prob / (double) ipow(100,pow));
+	return ((double)prob / (double)ipow(10.0,pow));
 }
 
 /*
@@ -149,7 +158,7 @@ void * process_client_connection(void * ptr)
 		if (strcmp(message, "END") != 0) {
 			sscanf(message,"%d%c%d%c%lf", &src, &comma, &dst, &comma, &threshold);
 
-			bool success = success_prob(src,dst) >= pow(10.0,threshold);
+			bool success = success_prob(src,dst) > pow(10.0,threshold);
 			const char *reply = success ? "YES" : "NO";
 			uint32_t reply_len = success ? 3 : 2;
 
