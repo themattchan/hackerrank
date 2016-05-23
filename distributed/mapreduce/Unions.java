@@ -1,4 +1,4 @@
-//Author Shafaet, shafaet@hackerrank.com
+//author shafaet, shafaet@hackerrank.com
 import java.util.*;
 import org.json.simple.JSONObject;
 
@@ -26,6 +26,7 @@ class MapReduce {
 			it.remove();
 		}
 		return finalResult;
+
 	}
 
 	private void emit(LinkedHashMap obj) {
@@ -33,23 +34,22 @@ class MapReduce {
 	}
 
 	private void reducer(int key, HashSet value) {
-		List < String > list = new ArrayList < String > (value);
-		if (list.size() == 1 && list.iterator().next().equals("R")) {
-			LinkedHashMap obj = new LinkedHashMap();
-			obj.put("key", key);
-			emit(obj);
-		}
+		LinkedHashMap obj = new LinkedHashMap();
+		obj.put("key", key);
+		emit(obj);
+
 	}
 
 	private void mapper(LinkedHashMap record) {
 		String value = (String) record.get("value");
 		int key = (int)record.get("key");
-		emitIntermediate(key, value);
+		emitIntermediate(key, String.valueOf(key));	//Complete this line
 	}
 
 	private void emitIntermediate(int key, String value) {
 		if (!intermediate.containsKey(key))
 			intermediate.put(key, new HashSet());
+
 		HashSet temp = (HashSet) intermediate.get(key);
 		temp.add(value);
 		intermediate.put(key, temp);
@@ -68,11 +68,11 @@ public class Solution {
 		int c = 0;
 		for (int i = 0; i < Nr; i++) {
 			Map obj = new LinkedHashMap();
-			R[i] = sc.nextInt();
-			obj.put("value", "R");
-			obj.put("key", R[i]);
-			inputdata.put(c, obj);
-			c++;
+			 R[i] = sc.nextInt();
+			 obj.put("value", "R");
+			 obj.put("key", R[i]);
+			 inputdata.put(c, obj);
+			 c++;
 		}
 		for (int i = 0; i < Ns; i++) {
 			Map obj = new LinkedHashMap();
@@ -85,9 +85,11 @@ public class Solution {
 
 		MapReduce mapred = new MapReduce();
 		JSONObject result = mapred.execute(inputdata);
+
 		for (int i = 0; i < result.size(); i++) {
 			LinkedHashMap record = (LinkedHashMap) result.get(i);
 			System.out.println(record.get("key"));
+
 		}
 	}
 }
