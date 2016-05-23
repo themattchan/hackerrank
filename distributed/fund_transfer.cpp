@@ -101,8 +101,7 @@ void * process_client_connection(void * ptr)
 	fflush(stdout);
 
 	int terminate_client = 0;
-	do
-	{
+	do {
 		/* read length of message */
 		char *message = NULL;
 		uint32_t message_length = 0;
