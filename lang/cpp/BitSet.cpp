@@ -12,7 +12,7 @@ constexpr unsigned int MOD { 1u << 31 };
 int main()
 {
 	unsigned int N,S,P,Q;
-    cin >> N >> S >> P >> Q;
+	cin >> N >> S >> P >> Q;
 
 	vector<bool> seen(MOD);
 	unsigned long last = S % MOD;
