@@ -75,7 +75,7 @@ int ipow(int base, int exp)
     return result;
 }
 
-double success_prob(int src, int dst)
+bool success_prob(int src, int dst, double& threshold)
 {
 	if (src == dst) return 1.00;
 
@@ -101,7 +101,7 @@ double success_prob(int src, int dst)
 		dst_path.pop();
 	}
 
-	int pow = 2 * (src_path.size() + dst_path.size());
+	int exp = 2 * (src_path.size() + dst_path.size());
 
 	int prob = 1;
 	while (src_path.size() > 0) {
@@ -110,7 +110,7 @@ double success_prob(int src, int dst)
 		prob *= nodes[n].transmit_prob;
 		while ((prob / 10) > 0) {
 			prob /= 10;
-			pow--;
+			exp--;
 		}
 	}
 	while (dst_path.size() > 0) {
@@ -119,11 +119,11 @@ double success_prob(int src, int dst)
 		prob *= nodes[n].transmit_prob;
 		while ((prob / 10) > 0) {
 			prob /= 10;
-			pow--;
+			exp--;
 		}
 	}
 
-	return ((double)prob / (double)ipow(10.0,pow));
+	return (((double)prob / (double)ipow(10,exp)) >= pow(10.0, threshold));
 }
 
 /*
@@ -158,7 +158,7 @@ void * process_client_connection(void * ptr)
 		if (strcmp(message, "END") != 0) {
 			sscanf(message,"%d%c%d%c%lf", &src, &comma, &dst, &comma, &threshold);
 
-			bool success = success_prob(src,dst) > pow(10.0,threshold);
+			bool success = success_prob(src,dst,threshold);
 			const char *reply = success ? "YES" : "NO";
 			uint32_t reply_len = success ? 3 : 2;
 
