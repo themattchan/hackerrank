@@ -5,12 +5,10 @@
 (define parse-query
   (lambda (s)
     (define spl (string-split s "~"))
-    (define path (car spl))
-    (define attr (cdr spl))
 
     `(root
-      ,@(map string->symbol (string-split path "."))
-      ,@(map string->keyword attr))))
+      ,@(map string->symbol (string-split (car spl) "."))
+      ,@(map string->keyword (cdr spl)))))
 
 (define (read-xml lines)
   (string->xexpr
