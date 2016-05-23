@@ -108,7 +108,7 @@ bool success_prob(int src, int dst, double& threshold)
 		int n = src_path.top();
 		src_path.pop();
 		prob *= nodes[n].transmit_prob;
-		while ((prob / 10) > 0) {
+		while ((prob % 10 == 0) && (prob / 10) > 0) {
 			prob /= 10;
 			exp--;
 		}
@@ -117,7 +117,7 @@ bool success_prob(int src, int dst, double& threshold)
 		int n = dst_path.top();
 		dst_path.pop();
 		prob *= nodes[n].transmit_prob;
-		while ((prob / 10) > 0) {
+		while ((prob % 10 == 0) && (prob / 10) > 0) {
 			prob /= 10;
 			exp--;
 		}
