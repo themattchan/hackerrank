@@ -64,8 +64,7 @@ bool is_root(int node)
 int ipow(int base, int exp)
 {
     int result = 1;
-    while (exp)
-    {
+    while (exp) {
         if (exp & 1)
             result *= base;
         exp >>= 1;
