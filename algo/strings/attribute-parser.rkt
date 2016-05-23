@@ -14,18 +14,17 @@
 
 (define (read-xml lines)
   (string->xexpr
-          (apply string-append
-                 `("<root>"
-                 ,@(for/list ((i (range 0 lines)))
-                           (read-line))
-                 "</root>"))))
+   (apply string-append
+          `("<root>"
+            ,@(for/list ((i (range 0 lines))) (read-line))
+            "</root>"))))
 
 (let ((lines (read))
       (queries (read)))
   (read-line)   ; clear trailing newline gunk
   (let ((doc (read-xml lines)))
     (for ((_ (range 0 queries)))
-         (let ((found (se-path* (parse-query (read-line)) doc)))
-           (if found
-               (displayln found)
-               (displayln "Not Found!"))))))
+      (let ((found (se-path* (parse-query (read-line)) doc)))
+        (if found
+            (displayln found)
+            (displayln "Not Found!"))))))
