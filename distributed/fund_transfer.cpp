@@ -68,10 +68,14 @@ int path_len(int src, int dst)
 		src_path.push(src_node);
 		src_node = nodes[src_node];
 	}
+	src_path.push(src_node);
+
 	while (!is_root(dst_node)) {
 		dst_path.push(dst_node);
 		dst_node = nodes[dst_node];
 	}
+	dst_path.push(dst_node);
+
 	while (!src_path.empty() && !dst_path.empty() &&
 		   src_path.top() == dst_path.top()) {
 		src_path.pop();
