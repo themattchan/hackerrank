@@ -77,7 +77,7 @@ int ipow(int base, int exp)
 
 bool success_prob(int src, int dst, double& threshold)
 {
-	if (src == dst) return 1.00;
+	if (src == dst) return (1.00 >= pow(10.0,threshold));
 
 	int src_node = src;
 	int dst_node = dst;
