@@ -140,6 +140,5 @@ void * process_client_connection(void * ptr)
 	fflush(stdout);
 	close(conn->sock);
 	free(conn);
-	free(nodes);
 	pthread_exit(0);
 }
