@@ -28,8 +28,7 @@ void * process_client_connection(void * ptr)
 	printf("Connection received\n");
 
 	int terminate_client = 0;
-	do
-	{
+	do {
 		char *message = NULL;
 		uint32_t message_length = 0;
 
@@ -37,10 +36,11 @@ void * process_client_connection(void * ptr)
 		read_string_from_socket(conn->sock, &message, &message_length);
 		printf("Received = %s\n", message);
 
+		write_string_to_socket(conn->sock, message, message_length);
+
 		/* End of operation on this clinet */
 		if (strcmp(message, "END") == 0)
 			terminate_client = 1;
-		else write_string_to_socket(conn->sock, message, message_length);
 
 		free(message);
 
