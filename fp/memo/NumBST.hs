@@ -9,7 +9,7 @@ catalan n = ((2*n) `choose` n) `div` (n+1) `mod` bigNumber
     choose 0 k = 0
     choose n k = choose (n-1) (k-1) * n `div` k
 
-    bigNumber = (10^8 +7)
+    bigNumber  = 10^8 +7
 
 
 main :: IO ()
