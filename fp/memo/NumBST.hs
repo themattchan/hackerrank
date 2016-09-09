@@ -13,5 +13,5 @@ catalan n = ((2*n) `choose` n) `div` (n+1) `mod` bigNumber
 
 
 main :: IO ()
-main = readLn >>= \n -> replicateM_ n $
-   readLn >>= \x -> print (catalan x)
+main = readLn >>= flip replicateM_
+        (readLn >>= print . catalan)
