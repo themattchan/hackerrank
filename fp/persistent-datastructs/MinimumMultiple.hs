@@ -10,11 +10,12 @@ data Tree a
   | Branch a (Tree a) (Tree a)
   deriving Show
 
-nodeValue (Leaf x) = x
-nodeValue (Branch x _ _) = x
+value :: Tree a -> a
+value (Leaf x) = x
+value (Branch x _ _) = x
 
 instance Semigroup a => Semigroup (Tree a) where
-  t1 <> t2 = Branch (nodeValue t1 <> nodeValue t2) t1 t2
+  t1 <> t2 = Branch (value t1 <> value t2) t1 t2
 
 -- An interval [a,b]
 newtype Range = Range { getRange :: (Int,Int) }
@@ -24,6 +25,13 @@ newtype Range = Range { getRange :: (Int,Int) }
 instance Semigroup Range where
   (Range (lo,_)) <> (Range (_,hi)) =
     Range (lo,hi)
+
+subrangeOf, highest, lowest :: Range -> Range -> Bool
+(Range (slo,shi)) `subrangeOf` (Range (lo,hi)) =
+  slo >= lo && shi <= hi
+
+(Range (_,shi)) `highest` (Range (_,hi)) = shi == hi
+(Range (slo,_)) `lowest` (Range (lo,_))  = slo == lo
 
 makeRangeTree :: [Int] -> Maybe (Tree (Range, Min Int))
 makeRangeTree = listToMaybe . build . map singleton . zip [1..]
@@ -43,7 +51,12 @@ update :: Applicative m
 update idx f tree = undefined
 
 query :: Monoid a => Range -> Tree (Range, a) -> a
-query rng t = undefined
+query rng@(Range (lo,hi)) t = case t of
+  Leaf (_,x) -> x
+  Branch (br,x) l r
+    | 
+    
+  
 
 data Action = Q Range | U Index (Min (Int -> Int))
 
