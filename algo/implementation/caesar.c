@@ -18,17 +18,17 @@ cipher(char c, int k)
 int
 main()
 {
-    int n;
-    scanf("%d", &n);
-    char *s = (char *) malloc(10240 * sizeof(char));
-    scanf("%s", s);
-    int k;
-    scanf("%d", &k);
+	int n;
+	scanf("%d", &n);
+	char *s = (char *) malloc(10240 * sizeof(char));
+	scanf("%s", s);
+	int k;
+	scanf("%d", &k);
 
 	for (int i = 0; i < n; i++)
 		s[i] = cipher(s[i],k);
 
 	printf("%s\n", s);
 	free(s);
-    return 0;
+	return 0;
 }
