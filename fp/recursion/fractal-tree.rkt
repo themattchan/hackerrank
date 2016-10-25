@@ -5,7 +5,7 @@
 
 (define (pad l) (make-string l #\_))
 
-(define (repeat e n) (build-list n (const e))
+(define (repeat e n) (build-list n (const e)))
 
 ; depth 1 -> 16
 ; depth 2 -> 8
@@ -13,7 +13,7 @@
 ; depth 4 -> 2
 ; depth 5 -> 1
 
-  (define (centre width rows)
+(define (centre width rows)
   (map (λ (r)
          (let* ((rl (string-length r))
                 (pl (floor (/ (- width rl) 2)))
@@ -30,7 +30,7 @@
   (define (draw-branch h)
     (if (zero? h) '()
         (cons (string-append "1" (pad (sub1 (sep-width h))) "1")
-          (draw-branch (sub1 h)))))
+              (draw-branch (sub1 h)))))
 
   (define (draw-base h) (repeat "1" h))
 
