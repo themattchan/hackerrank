@@ -18,6 +18,5 @@
          (for/list ([i (length chars)])
            (rotate-left (add1 n) chars)))))
 
-(for ([i (map string-join (map rotate lines))])
-  (display i)
-  (newline))
+(for ([l lines])
+  (displayln (string-join (rotate l))))
