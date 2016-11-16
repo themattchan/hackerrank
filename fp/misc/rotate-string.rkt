@@ -1,4 +1,5 @@
 #lang racket
+
 (define lines
   (for/list ([i (string->number (read-line))])
     (read-line)))
