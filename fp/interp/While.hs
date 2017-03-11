@@ -86,10 +86,6 @@ spaces     = Token.whiteSpace lexer
 binary name fun = Infix  (reservedOp name >> return fun) AssocLeft
 prefix name fun = Prefix (reservedOp name >> return fun)
 
-parseROp :: Parser RelOp
-parseROp =  (reservedOp ">" *> pure Gt)
-        <|> (reservedOp "<" *> pure Lt)
-
 parseAExpr :: Parser AExpr
 parseAExpr = buildExpressionParser aOps parseATerm
   where
@@ -115,6 +111,10 @@ parseBTerm =  parens parseBExpr
 
 parseRExpr :: Parser BExpr
 parseRExpr = flip BCmp <$> parseAExpr <*> parseROp <*> parseAExpr
+
+parseROp :: Parser RelOp
+parseROp =  (reservedOp ">" *> pure Gt)
+        <|> (reservedOp "<" *> pure Lt)
 
 parseStmt :: Parser Stmt
 parseStmt = parens parseStmt <|> Seq <$> sepBy1 stmts semi
