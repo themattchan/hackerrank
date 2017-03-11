@@ -68,7 +68,7 @@ languageDef = emptyDef
                             , "true", "false"
                             , "not", "and", "or"
                             ]
-  , Token.reservedOpNames = ["+", "-", "*", "/", ":="
+  , Token.reservedOpNames = [ "+", "-", "*", "/", ":="
                             , "<", ">", "and", "or", "not"
                             ]
   }
@@ -117,12 +117,8 @@ parseRExpr :: Parser BExpr
 parseRExpr = flip BCmp <$> parseAExpr <*> parseROp <*> parseAExpr
 
 parseStmt :: Parser Stmt
-parseStmt = parens parseStmt <|> sequenceOfStmt
+parseStmt = parens parseStmt <|> Seq <$> sepBy1 stmts semi
   where
-    sequenceOfStmt = do
-      ss <- sepBy1 stmts semi
-      return $ if length ss == 1 then head ss else Seq ss
-
     stmts = parseIf <|> parseWhile <|> parseAssign
 
     parseAssign = do
@@ -209,7 +205,7 @@ interpret = (parseProg >=> evalProg >>> runMachine >>> pure) >>> either pError p
     pError  = const $ putStrLn "Parse Error"
     pResult = void . M.traverseWithKey (\v i -> putStrLn $ v ++ " " ++ show i)
 
-test =
+test = unlines
   [ "fact := 1 ;"
   , "val := 10000 ;"
   , "cur := val ;"
