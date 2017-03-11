@@ -196,8 +196,7 @@ evalProg (If b e1 e2) = do
         else evalProg e2
 evalProg (While b e)  = do
   b' <- evalBool b
-  if b' then evalProg e >> evalProg (While b e)
-        else return ()
+  when b' (evalProg e >> evalProg (While b e))
 
 interpret :: String -> IO ()
 interpret = (parseProg >=> evalProg >>> runMachine >>> pure) >>> either pError pResult
