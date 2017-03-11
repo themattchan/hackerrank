@@ -1,15 +1,19 @@
 module While where
 import Prelude hiding (lookup)
+import Control.Arrow ((>>>))
 import Control.Applicative hiding (empty, (<|>))
 import Control.Monad
 import Control.Monad.State hiding (when)
 
 import qualified Data.Map as M
+import Data.List (foldl1)
 
 import Text.Parsec hiding (State, between)
-import Text.Parsec.Combinator hiding (between)
+import Text.Parsec.Combinator
 import Text.Parsec.Char
 import Text.Parsec.String
+
+import Data.Semigroup
 
 --------------------------------------------------------------------------------
 -- * Embedding
@@ -23,6 +27,9 @@ data Stmt
   | If BExpr Stmt Stmt
   | While BExpr Stmt
   deriving (Show)
+
+instance Semigroup Stmt where
+  (<>) = Seq
 
 data ArithOp
   = Plus | Sub | Mul | Div
@@ -54,54 +61,76 @@ data BExpr
 eatSpaces :: Parser a -> Parser a
 eatSpaces = (spaces *>) . (<* spaces)
 
+sstring = eatSpaces . string
+
+parens :: Parser a -> Parser a
+parens = between (char ')') (char ')')
+
+braces :: Parser a -> Parser a
+braces = between (char '{') (char '}')
+
 parseVar :: Parser Variable
 parseVar = many1 letter
 
+parseVal :: Parser Value
+parseVal = read <$> many1 digit
 
--- parser :: Parser Expr
--- parser = buildExpressionParser optable factor
---   where
---     binary name fun = Infix  (eatSpaces (string name) >> return fun) AssocRight
---     prefix name fun = Prefix (eatSpaces (string name) >> return fun)
---     -- tightest binding first
---     optable = [ [prefix "-" Neg, prefix "+" id]
---               , [binary "*" Mul, binary "/" Div, binary "^" Pow]
---               , [binary "+" Add, binary "-" Sub]
---               ]
+parseAOp :: Parser ArithOp
+parseAOp =  try (char '*' *> pure Mul)
+        <|> try (char '/' *> pure Div)
+        <|> try (char '+' *> pure Plus)
+        <|> char '-' *> pure Sub
 
--- eatSpaces :: Parser a -> Parser a
--- eatSpaces = (spaces *>) . (<* spaces)
+parseROp :: Parser RelOp
+parseROp =  try (char '>' *> pure Gt)
+        <|> char '<' *> pure Lt
 
--- factor :: Parser Expr
--- factor = try paren <|> try implicitMul <|> try num <|> var
---   where
---     paren       = between (char '(') (char ')') (eatSpaces parser)
---     implicitMul = (Mul <$> num <*> var) <|> (Mul <$> num <*> paren)
---     num         = Num . read <$> eatSpaces (many1 digit)
---     var         = Var <$> eatSpaces lower
+parseBOp :: Parser BoolOp
+parseBOp =  try (string "and" *> pure And)
+        <|> string "or"  *> pure Or
 
+parseAExpr :: Parser AExpr
+parseAExpr =  try (Var  <$> parseVar)
+          <|> try (Val  <$> parseVal)
+          <|> try (flip AApp <$> parseAExpr <*> parseAOp <*> parseAExpr)
+          <|> parens parseAExpr
 
--- parseAOp :: Parser ArithOp
--- parseAOp =  char '+' *> pure Plus
---         <|> char '-' *> pure Sub
---         <|> char '*' *> pure Mul
---         <|> char '/' *> pure Div
+parseBExpr :: Parser BExpr
+parseBExpr =  try (string "true" *> pure TRUE)
+          <|> try (string "false" *> pure FALSE)
+          <|> try (flip BApp <$> parseBExpr <*> parseBOp <*> parseBExpr)
+          <|> try (flip BCmp <$> parseAExpr <*> parseROp <*> parseAExpr)
+          <|> parens parseBExpr
 
--- parseBOp :: Parser BoolOp
--- parseBOp =  string "and" *> pure And
---         <|> string "or"  *> pure Or
+parseStmt :: Parser Stmt
+parseStmt = foldl1 (<>) <$> sepBy1 parseAll (eatSpaces (char ';'))
+  where
+    parseAll = try parseIf <|> try parseWhile <|> parseAssign
 
--- parseROp :: Parser RelOp
--- parseROp = undefined
+    parseAssign = do
+      v <- parseVar
+      sstring ":="
+      a <- parseAExpr
+      return $ Assign v a
 
--- parseAExpr :: Parser AExpr
--- parseAExpr = undefined
+    parseIf = do
+      sstring "if"
+      b <- parseBExpr
+      sstring "then"
+      t <- braces parseStmt
+      sstring "else"
+      f <- braces parseStmt
+      return $ If b t f
 
--- parseBExpr :: Parser BExpr
--- parseBExpr = undefined
+    parseWhile = do
+      sstring "while"
+      b <- parseBExpr
+      sstring "do"
+      s <- braces parseStmt
+      return $ While b s
 
--- parseProg :: Parser Stmt
--- parseProg = undefined
+parseProg :: String -> Either ParseError Stmt
+parseProg = parse parseStmt ""
 
 --------------------------------------------------------------------------------
 -- * Interpreter
@@ -156,5 +185,14 @@ evalProg (While b e)  = do
   if b' then evalProg e >> evalProg (While b e)
         else return ()
 
+interpret :: String -> IO ()
+interpret = (parseProg >=> evalProg >>> runMachine >>> pure) >>> either pError pResult
+  where
+    pError  = const $ putStrLn "Parse Error"
+    pResult = void . M.traverseWithKey (\v i -> putStrLn $ v ++ " " ++ show i)
+
+
+test = "fact := 1 ;\nval := 10000 ;\ncur := val ;\nmod := 1000000007 ;\n\nwhile ( cur > 1 )\n  do\n   {\n      fact := fact * cur ;\n      fact := fact - fact / mod * mod ;\n      cur := cur - 1\n   } ;\n\ncur := 0"
+
 main :: IO ()
-main = return ()
+main = getContents >>= interpret
