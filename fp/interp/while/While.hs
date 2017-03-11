@@ -8,10 +8,11 @@ import Control.Monad.State hiding (when)
 import qualified Data.Map as M
 import Data.List (foldl1)
 
-import Text.Parsec hiding (State, between)
-import Text.Parsec.Combinator
-import Text.Parsec.Char
-import Text.Parsec.String
+import Text.Parsec hiding (State, between, spaces)
+import Text.Parsec.String (Parser)
+import Text.Parsec.Expr
+import qualified Text.Parsec.Token as Token
+import Text.Parsec.Language
 
 import Data.Semigroup
 
@@ -19,17 +20,14 @@ import Data.Semigroup
 -- * Embedding
 
 type Variable = String
-type Value = Int
+type Value = Integer
 
 data Stmt
   = Assign Variable AExpr
-  | Seq Stmt Stmt
+  | Seq [Stmt]-- Stmt
   | If BExpr Stmt Stmt
   | While BExpr Stmt
   deriving (Show)
-
-instance Semigroup Stmt where
-  (<>) = Seq
 
 data ArithOp
   = Plus | Sub | Mul | Div
@@ -58,74 +56,94 @@ data BExpr
 --------------------------------------------------------------------------------
 -- * Parser
 
-eatSpaces :: Parser a -> Parser a
-eatSpaces = (spaces *>) . (<* spaces)
+languageDef = emptyDef
+  { Token.commentStart    = "/*"
+  , Token.commentEnd      = "*/"
+  , Token.commentLine     = "//"
+  , Token.identStart      = letter
+  , Token.identLetter     = alphaNum
+  , Token.reservedNames   = [ "if", "then", "else"
+                            , "while", "do"
+                            , "skip"
+                            , "true", "false"
+                            , "not", "and", "or"
+                            ]
+  , Token.reservedOpNames = ["+", "-", "*", "/", ":="
+                            , "<", ">", "and", "or", "not"
+                            ]
+  }
 
-sstring = eatSpaces . string
+lexer      = Token.makeTokenParser languageDef
+identifier = Token.identifier lexer
+reserved   = Token.reserved   lexer
+reservedOp = Token.reservedOp lexer
+parens     = Token.parens     lexer
+braces     = Token.braces     lexer
+integer    = Token.integer    lexer
+semi       = Token.semi       lexer
+spaces     = Token.whiteSpace lexer
 
-parens :: Parser a -> Parser a
-parens = between (char ')') (char ')')
-
-braces :: Parser a -> Parser a
-braces = between (char '{') (char '}')
-
-parseVar :: Parser Variable
-parseVar = many1 letter
-
-parseVal :: Parser Value
-parseVal = read <$> many1 digit
-
-parseAOp :: Parser ArithOp
-parseAOp =  try (char '*' *> pure Mul)
-        <|> try (char '/' *> pure Div)
-        <|> try (char '+' *> pure Plus)
-        <|> char '-' *> pure Sub
+binary name fun = Infix  (reservedOp name >> return fun) AssocLeft
+prefix name fun = Prefix (reservedOp name >> return fun)
 
 parseROp :: Parser RelOp
-parseROp =  try (char '>' *> pure Gt)
-        <|> char '<' *> pure Lt
-
-parseBOp :: Parser BoolOp
-parseBOp =  try (string "and" *> pure And)
-        <|> string "or"  *> pure Or
+parseROp =  (reservedOp ">" *> pure Gt)
+        <|> (reservedOp "<" *> pure Lt)
 
 parseAExpr :: Parser AExpr
-parseAExpr =  try (Var  <$> parseVar)
-          <|> try (Val  <$> parseVal)
-          <|> try (flip AApp <$> parseAExpr <*> parseAOp <*> parseAExpr)
-          <|> parens parseAExpr
+parseAExpr = buildExpressionParser aOps parseATerm
+  where
+    aOps = [ [ binary "*" (AApp Mul) , binary "/" (AApp Div) ]
+           , [ binary "+" (AApp Plus), binary "-" (AApp Sub) ]
+           ]
+
+parseATerm :: Parser AExpr
+parseATerm =  parens parseAExpr
+          <|> Var <$> identifier
+          <|> Val <$> integer
 
 parseBExpr :: Parser BExpr
-parseBExpr =  try (string "true" *> pure TRUE)
-          <|> try (string "false" *> pure FALSE)
-          <|> try (flip BApp <$> parseBExpr <*> parseBOp <*> parseBExpr)
-          <|> try (flip BCmp <$> parseAExpr <*> parseROp <*> parseAExpr)
-          <|> parens parseBExpr
+parseBExpr =  buildExpressionParser bOps parseBTerm
+  where
+    bOps = [ [ binary "and" (BApp And) , binary "or" (BApp Or) ] ]
+
+parseBTerm :: Parser BExpr
+parseBTerm =  parens parseBExpr
+          <|> reserved "true"  *> pure TRUE
+          <|> reserved "false" *> pure FALSE
+          <|> parseRExpr
+
+parseRExpr :: Parser BExpr
+parseRExpr = flip BCmp <$> parseAExpr <*> parseROp <*> parseAExpr
 
 parseStmt :: Parser Stmt
-parseStmt = foldl1 (<>) <$> sepBy1 parseAll (eatSpaces (char ';'))
+parseStmt = parens parseStmt <|> sequenceOfStmt
   where
-    parseAll = try parseIf <|> try parseWhile <|> parseAssign
+    sequenceOfStmt = do
+      ss <- sepBy1 stmts semi
+      return $ if length ss == 1 then head ss else Seq ss
+
+    stmts = parseIf <|> parseWhile <|> parseAssign
 
     parseAssign = do
-      v <- parseVar
-      sstring ":="
+      v <- identifier
+      reservedOp ":="
       a <- parseAExpr
       return $ Assign v a
 
     parseIf = do
-      sstring "if"
+      reserved "if"
       b <- parseBExpr
-      sstring "then"
+      reserved "then"
       t <- braces parseStmt
-      sstring "else"
+      reserved "else"
       f <- braces parseStmt
       return $ If b t f
 
     parseWhile = do
-      sstring "while"
+      reserved "while"
       b <- parseBExpr
-      sstring "do"
+      reserved "do"
       s <- braces parseStmt
       return $ While b s
 
@@ -148,7 +166,7 @@ lookup = gets . flip (M.!)
 assign :: Variable -> Value -> Machine ()
 assign v e = modify (M.insert v e)
 
-evalAOp :: ArithOp -> (Int -> Int -> Int)
+evalAOp :: ArithOp -> (Integer -> Integer -> Integer)
 evalAOp Plus = (+)
 evalAOp Sub = (-)
 evalAOp Mul = (*)
@@ -158,11 +176,11 @@ evalBOp :: BoolOp -> (Bool -> Bool -> Bool)
 evalBOp And = (&&)
 evalBOp Or  = (||)
 
-evalROp :: RelOp -> (Int -> Int -> Bool)
+evalROp :: RelOp -> (Integer -> Integer -> Bool)
 evalROp Lt = (<)
 evalROp Gt = (>)
 
-evalArith :: AExpr -> Machine Int
+evalArith :: AExpr -> Machine Integer
 evalArith (Val i)         = return i
 evalArith (Var v)         = lookup v
 evalArith (AApp op e1 e2) = evalAOp op <$> evalArith e1 <*> evalArith e2
@@ -175,7 +193,7 @@ evalBool (BCmp rop ae1 ae2) = evalROp rop <$> evalArith ae1 <*> evalArith ae2
 
 evalProg :: Stmt -> Machine ()
 evalProg (Assign v e) = evalArith e >>= assign v
-evalProg (Seq e1 e2)  = evalProg e1 >> evalProg e2
+evalProg (Seq es)     = mapM_ evalProg es
 evalProg (If b e1 e2) = do
   b' <- evalBool b
   if b' then evalProg e1
@@ -191,8 +209,23 @@ interpret = (parseProg >=> evalProg >>> runMachine >>> pure) >>> either pError p
     pError  = const $ putStrLn "Parse Error"
     pResult = void . M.traverseWithKey (\v i -> putStrLn $ v ++ " " ++ show i)
 
+test =
+  [ "fact := 1 ;"
+  , "val := 10000 ;"
+  , "cur := val ;"
+  , "mod := 1000000007 ;"
+  , ""
+  , "while ( cur > 1 )"
+  , "  do"
+  , "   {"
+  , "      fact := fact * cur ;"
+  , "      fact := fact - fact / mod * mod ;"
+  , "      cur := cur - 1"
+  , "   } ;"
+  , ""
+  , "cur := 0"
+  ]
 
-test = "fact := 1 ;\nval := 10000 ;\ncur := val ;\nmod := 1000000007 ;\n\nwhile ( cur > 1 )\n  do\n   {\n      fact := fact * cur ;\n      fact := fact - fact / mod * mod ;\n      cur := cur - 1\n   } ;\n\ncur := 0"
 
 main :: IO ()
 main = getContents >>= interpret
