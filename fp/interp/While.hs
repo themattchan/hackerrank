@@ -7,6 +7,7 @@ import Control.Monad.State hiding (when)
 
 import qualified Data.Map as M
 import Data.List (foldl1)
+import Data.Functor (($>))
 
 import Text.Parsec hiding (State, between, spaces)
 import Text.Parsec.String (Parser)
@@ -83,8 +84,8 @@ integer    = Token.integer    lexer
 semi       = Token.semi       lexer
 spaces     = Token.whiteSpace lexer
 
-binary name fun = Infix  (reservedOp name >> return fun) AssocLeft
-prefix name fun = Prefix (reservedOp name >> return fun)
+binary name fun = Infix  (reservedOp name $> fun) AssocLeft
+prefix name fun = Prefix (reservedOp name $> fun)
 
 parseAExpr :: Parser AExpr
 parseAExpr = buildExpressionParser aOps parseATerm
@@ -105,16 +106,16 @@ parseBExpr =  buildExpressionParser bOps parseBTerm
 
 parseBTerm :: Parser BExpr
 parseBTerm =  parens parseBExpr
-          <|> reserved "true"  *> pure TRUE
-          <|> reserved "false" *> pure FALSE
+          <|> reserved "true"  $> TRUE
+          <|> reserved "false" $> FALSE
           <|> parseRExpr
 
 parseRExpr :: Parser BExpr
 parseRExpr = flip BCmp <$> parseAExpr <*> parseROp <*> parseAExpr
 
 parseROp :: Parser RelOp
-parseROp =  (reservedOp ">" *> pure Gt)
-        <|> (reservedOp "<" *> pure Lt)
+parseROp =  reservedOp ">" $> Gt
+        <|> reservedOp "<" $> Lt
 
 parseStmt :: Parser Stmt
 parseStmt = parens parseStmt <|> Seq <$> sepBy1 stmts semi
