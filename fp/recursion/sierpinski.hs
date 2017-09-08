@@ -28,7 +28,9 @@ drawTriangle w h
 drawNested :: Int -> Int -> Int -> Pic
 drawNested d w h
   | d == 0    = drawTriangle w h
-  | otherwise = centred w nest `above` (nest `beside` nest)
+  | otherwise =    centred w nest
+                      `above`
+                (nest `beside` nest)
   where
     nest = drawNested (d-1) (w `div` 2) (h `div` 2)
 
