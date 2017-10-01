@@ -3,10 +3,10 @@ module Fibonacci where
 import Data.List
 import Control.Monad
 
--- or just use an accumulator...
-fibonacci :: Int -> Integer
-fibonacci n = unfoldr (\(a,b) -> Just (a, (b, a+b^2))) (0,1) !! n
+fibonacci :: Int -> Int
+fibonacci n = unfoldr (\(a,b) -> Just (a, (b, a+b `mod` m))) (0,1) !! n
 
+m :: Int
 m = 10^8 + 7
 
 main :: IO ()
