@@ -6,18 +6,26 @@
 #include <limits.h>
 #include <stdbool.h>
 
+/*
+  a+b = a^b
+  ==> a^b + a &b = a^b
+  ==> a & b = 0
+  given fixed a, there are 2^ (#num 0s in a) possibilities
+*/
 long int solve(long int n) {
-    long int count = 0;
-    for (long int i = 0; i <= n; i++) {
-        if ((i+n) == (i^n)) count++;
-    }
-    return count;
+	int zeros = 0;
+	while (n) {
+		if ((n&1) == 0)
+			zeros++;
+		n >>= 1;
+	}
+	return ((long int) 1) << zeros;
 }
 
 int main() {
-    long int n;
-    scanf("%li", &n);
-    long int result = solve(n);
-    printf("%ld\n", result);
-    return 0;
+	long int n;
+	scanf("%li", &n);
+	long int result = solve(n);
+	printf("%ld\n", result);
+	return 0;
 }
