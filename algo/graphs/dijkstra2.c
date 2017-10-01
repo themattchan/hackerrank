@@ -29,7 +29,7 @@ int in_heap(heap_t *heap, int vertex) {
 void printshorts(int *dist, int n, int s) {
 	for (int i = 0; i < n; i++) {
 		if (s != i) {
-			printf("%d ", dist[i]);
+			printf("%d ", dist[i] == INT_MAX ? -1 : dist[i]);
 		}
 	}
 	printf("\n");
