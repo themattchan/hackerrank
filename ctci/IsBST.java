@@ -10,8 +10,8 @@ class IsBST {
     boolean checkBST(Node root) {
         if (root == null) return true;
 
-        All l = foldMap(n -> new All(n.data < root.data), root.left).getMonoid();
-        All r = foldMap(n -> new All(n.data > root.data), root.right).getMonoid();
+        All l = foldMap(n -> n == null ? new All() : new All(n.data < root.data), root.left ).getMonoid();
+        All r = foldMap(n -> n == null ? new All() : new All(n.data > root.data), root.right).getMonoid();
         return l.mappend(r).getAll() && checkBST(root.left) && checkBST(root.right);
     }
 
