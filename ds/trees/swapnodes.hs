@@ -11,7 +11,7 @@ import qualified Control.Category as Cat
 import Control.Monad
 import qualified Data.Map as M
 
--- an endomorphic arrow in some category
+-- an endomorphism in some category
 newtype EndoCat c a = EndoCat { appCat :: Cat.Category c => c a a }
 instance S.Semigroup (EndoCat c a) where
   EndoCat f <> EndoCat g = EndoCat (g Cat.. f)
