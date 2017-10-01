@@ -7,10 +7,11 @@ import java.util.regex.*;
 @SuppressWarnings("unchecked")
 public class Solution {
     final boolean DEBUG = false;
-
+    final int ROOT = 1;
     int NODES;
     BitSet COLORS;
-    ArrayList<Integer>[] GRAPH; // this is *very* sparse
+    int[][] GRAPH; // this is *very* sparse
+    int[] revorder;
 
     int STRANGENESS;
     int BLACKS;
@@ -21,12 +22,233 @@ public class Solution {
     public Solution(int nodes, BitSet colors, ArrayList<Integer>[] graph) {
         this.NODES = nodes;
         this.COLORS = colors;
-        this.GRAPH = graph;
         this.SIZE = this.NODES;
-        this.CUTS = 0;
+        this.GRAPH = rooted(graph,ROOT);
+        this.revorder = topo();
+    }
 
-        updateState();
-        if (DEBUG) assert(checkInvariants());
+    void topovisit(int n, Deque<Integer> reversed, BitSet seen) {
+        if (seen.get(n)) return;
+        for (int m : GRAPH[n]) {
+            topovisit(m, reversed, seen);
+        }
+        seen.set(n);
+        reversed.addLast(n);
+    }
+    int[] topo() {
+        BitSet seen = new BitSet(NODES);
+        ArrayDeque<Integer> reversed = new ArrayDeque<>();
+        while (seen.cardinality() != NODES) {
+            int n = seen.nextClearBit(1);
+            topovisit(n, reversed,seen);
+        }
+        int[] topo = new int[reversed.size()];
+        int i = 0;
+        for (int e : reversed)
+            topo[i++] = e;
+        return topo;
+    }
+
+    // get rid of extraneous edges with a bfs
+    // this is now a dag from root down
+    int[][] rooted(ArrayList<Integer>[] graph, int s) {
+        BitSet seen = new BitSet(graph.length);
+        Queue<Integer> todo = new LinkedList<>();
+        todo.add(s);
+        seen.set(s);
+
+        //        System.out.println("visit rooted");
+        while (! todo.isEmpty()) {
+            int cur = todo.remove();
+            seen.set(cur);
+            Iterator<Integer> cur_adj_it = graph[cur].iterator();
+            while (cur_adj_it.hasNext()) {
+                int adj = cur_adj_it.next();
+                if (! seen.get(adj)) {
+                    todo.add(adj);
+                } else {
+                    cur_adj_it.remove();
+                }
+            }
+        }
+        int[][] graph1 = new int[graph.length][];
+        for (int i = 1; i <= NODES; i++) {
+            graph1[i] = new int[graph[i].size()];
+            int j = 0;
+            for (int e : graph[i])
+                graph1[i][j++] = e;
+        }
+        return graph1;
+    }
+    /*
+     starting at the root:
+     strangeness Leaf =  1  if black
+                      | -1 if white
+     strangeness (Node e subs)
+          =  max ( max (strangeness subs)  // dont pick this node, disconnect
+                 , if e == black then
+                         all neg subtrees
+                   else
+                         all pos subtrees
+                 )
+    */
+
+    // this is a monoid...
+    class DPInfo {
+        BitSet subtreeNodes;
+        int parity;
+        boolean picked;
+        int lastpicked; // node this info is propagated from
+        DPInfo() {
+            subtreeNodes = new BitSet(NODES);
+            parity = 0;// warning-- not initialized
+            picked = false;
+            lastpicked = 0;// warning-- not initialized
+        }
+        DPInfo(DPInfo copy) {
+            this.subtreeNodes = copy.subtreeNodes;
+            this.parity = copy.parity;
+            this.picked = copy.picked;
+            this.lastpicked = copy.lastpicked;
+        }
+    }
+
+    static void printDPInfo(DPInfo info) {
+        System.out.println(Math.abs(info.parity));
+        System.out.println(info.subtreeNodes.cardinality());
+
+         for (int i = info.subtreeNodes.nextSetBit(1); i >= 0; i = info.subtreeNodes.nextSetBit(i+1)) {
+            System.out.print(i + " ");
+         }
+        System.out.println("");
+    }
+
+    static void debugDPInfo(DPInfo info) {
+        System.out.println(info.parity);
+
+        for (int i = info.subtreeNodes.nextSetBit(1); i >= 0; i = info.subtreeNodes.nextSetBit(i+1)) {
+            System.out.print(i + " ");
+        }
+        System.out.println("");
+    }
+
+    int parity(int i) {
+        return isblack(i) ? 1 : -1;
+    }
+    // bottom-up tree, accumulating strangeness info
+    DPInfo maxstrange() {
+        DPInfo[] dp = new DPInfo[GRAPH.length];
+
+        //        for (int node : revorder) {
+        for (int revorder_i = 0; revorder_i < revorder.length; revorder_i++) {
+            int node = revorder[revorder_i];
+            // dont pick node
+            int bestkid = -1;
+            int max_strangeness = Integer.MIN_VALUE;
+            // pick this node
+            DPInfo pickBlack = new DPInfo();
+            DPInfo pickWhite = new DPInfo();
+
+            // SINGLE FUSED LOOP
+            for (int kid : GRAPH[node]) {
+
+                // case 1: don't pick this node. find kid w/ max strangeness
+                int ss = Math.abs(dp[kid].parity);
+                if (max_strangeness < ss) {
+                    bestkid = kid;
+                    max_strangeness = ss;
+                }
+
+                // case 2: pick this node. partition kids into
+                // positive / negative paraties, pick the best option
+                if (dp[kid].picked) {
+                    if (dp[kid].parity < 0) { // white = -1
+                        pickWhite.subtreeNodes.or(dp[kid].subtreeNodes);
+                        pickWhite.subtreeNodes.set(kid);
+                        pickWhite.parity += dp[kid].parity;
+                    }
+
+                    else if (dp[kid].parity > 0) { // black = 1
+                        pickBlack.subtreeNodes.or(dp[kid].subtreeNodes);
+                        pickBlack.subtreeNodes.set(kid);
+                        pickBlack.parity += dp[kid].parity;
+                    }
+                }
+                else if (! dp[kid].picked) {
+                    // parity of lastpicked + missing picks
+                    int pathparity = dp[kid].parity;
+                    // Path to the target revorder[dp[kid].lastpicked]
+                    BitSet path = new BitSet();
+                    // lastpicked = index in revorder of the last picked subtree
+                    // want: trail of nodes from kid -> parent of lastpicked
+                    // startfrom last picked, look at revorder[i] until we reach
+                    // revorder[i] == kid
+                    int target = revorder[dp[kid].lastpicked];
+                    int ri = dp[kid].lastpicked +1;
+                    while (true) {
+                        // a possible parent
+                        int parent = revorder[ri];
+                        for (int child : GRAPH[parent]) {
+                            // found parent of target
+                            if (child == target) {
+                                path.set(parent);
+                                pathparity += parity(parent);
+                                target = parent;
+                                break; // exit for loop
+                            }
+                        }
+
+                        if (parent == kid)
+                            break;
+                        else
+                            ri++;
+                    }
+
+                    if  (pathparity < 0) { // white = -1
+                        pickWhite.subtreeNodes.or(dp[kid].subtreeNodes);
+                        pickWhite.subtreeNodes.or(path);
+                        pickWhite.parity += pathparity;
+                    }
+                    else if (pathparity > 0) { // black = 1
+                        pickBlack.subtreeNodes.or(dp[kid].subtreeNodes);
+                        pickBlack.subtreeNodes.or(path);
+                        pickBlack.parity += pathparity;
+                    }
+                }
+            }
+
+            DPInfo dontpick = bestkid != -1 ? new DPInfo(dp[bestkid]) : null;
+            if (dontpick != null)
+                dontpick.picked = false;
+
+            pickBlack.subtreeNodes.set(node);
+            pickBlack.parity += parity(node);
+            pickBlack.lastpicked = revorder_i;
+            pickBlack.picked = true;
+
+            pickWhite.subtreeNodes.set(node);
+            pickWhite.parity += parity(node);
+            pickWhite.lastpicked = revorder_i;
+            pickWhite.picked = true;
+
+
+            DPInfo pickMe = Math.abs(pickBlack.parity) > Math.abs(pickWhite.parity)
+                               ? pickBlack
+                            : pickWhite;
+
+            DPInfo thisinfo = dontpick == null
+                                ? pickMe
+                            : Math.abs(dontpick.parity) > Math.abs(pickMe.parity)
+                                ? dontpick
+                            : pickMe;
+
+            dp[node] = thisinfo;
+        }
+        // for (int i = 1; i <= NODES; i++) {
+        //     printDPInfo(dp[i]);
+        //     System.out.println("====================");
+        // }
+        return dp[ROOT];
     }
 
     public static void run(Scanner in) {
@@ -48,8 +270,7 @@ public class Solution {
             graph[y].add(x);
         }
         Solution sol = new Solution(nodes,colors,graph);
-        sol.solve();
-        sol.printSolution();
+        printDPInfo(sol.maxstrange());
         in.close();
     }
 
@@ -67,149 +288,5 @@ public class Solution {
 
     boolean isblack(int i) {
         return COLORS.get(i);
-    }
-
-    boolean isnode(int i) {
-        return GRAPH[i] != null;
-    }
-    boolean iscut(int i) {
-        return GRAPH[i] == null;
-    }
-
-    boolean isleaf(int i) {
-        return isnode(i) && GRAPH[i].size() == 1;
-    }
-
-    void updateState() {
-        int blacks = 0;
-        int whites = 0;
-        for (int i = 1; i <= NODES; i++) {
-            if (! iscut(i)) {
-                if (isblack(i))
-                    blacks++;
-                else
-                    whites++;
-            }
-        }
-        this.BLACKS = blacks;
-        this.WHITES = whites;
-        this.STRANGENESS = strangeness(blacks,whites);
-        assert (blacks + whites == this.SIZE);
-    }
-
-    void printSolution() {
-        System.out.println(STRANGENESS);
-        System.out.println(SIZE);
-        for (int i = 1; i <= NODES; i++) {
-            if (isnode(i)) {
-                System.out.print(i + " ");
-            }
-        }
-        System.out.println("");
-    }
-
-    boolean checkInvariants() {
-        int nodes = 0;
-        int cuts = 0;
-        for (int i = 1; i <= NODES; i++) {
-            if (isnode(i)) {
-                nodes++;
-            } else {
-                cuts++;
-                // also check for dangling links...
-                for (int j = 1; j <= NODES; i++) {
-                    // j -> i
-                    if (GRAPH[j].contains(i)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return
-            (this.SIZE + this.CUTS == this.NODES) &&
-            (this.BLACKS + this.WHITES == this.SIZE) &&
-            (nodes == this.SIZE) &&
-            (cuts == this.CUTS);
-
-    }
-    // mutates explored
-    void colorchain(HashSet explored, int i) {
-        if (! explored.contains(i)) {
-            boolean color = isblack(i);
-            int up = GRAPH[i].get(0);
-
-            // dfs on the parent of i
-            Stack<Integer> stk = new Stack<>();
-            stk.push(i);
-            while (! stk.isEmpty()) {
-                int v = stk.pop();
-                if (! explored.contains(v) && GRAPH[v].size() <= 2) {
-                    explored.add(v);
-                    // explore it
-                    for (int w : GRAPH[v]) {
-                        if (isnode(w) && isblack(w) == color)
-                            stk.push(w);
-                    }
-                }
-            }
-        }
-    }
-
-    // O(NM)
-    void sweep(HashSet<Integer> rm) {
-        for (int i = 1; i <= NODES; i++) {
-            if (rm.contains(i)) {
-                GRAPH[i] = null;
-                this.SIZE--;
-                this.CUTS++;
-            }
-            else if (GRAPH[i] != null) {
-                Iterator<Integer> adjIt = GRAPH[i].iterator();
-                while (adjIt.hasNext()) {
-                    int adj = adjIt.next();
-                    if (rm.contains(i) || GRAPH[adj] == null) {
-                        adjIt.remove();
-                    }
-                }
-            }
-        }
-    }
-    // first, find the most popular colour in the tree. we will maximise this
-    // colour by cutting the other.
-    // tally both colours
-    // cut all leaves.
-    void solve() {
-        while (true) {
-            HashSet<Integer> black = new HashSet<>();
-            HashSet<Integer> white = new HashSet<>();
-
-            for (int i = 1; i <= NODES; i++) {
-                if (isleaf(i)) {
-                    if (isblack(i)) {
-                        colorchain(black, i);
-                    } else {
-                        colorchain(white, i);
-                    }
-                }
-            }
-
-            int strangeness_if_black = strangeness(BLACKS - black.size(), WHITES);
-            int strangeness_if_white = strangeness(BLACKS, WHITES - white.size());
-
-            boolean cut_black = strangeness_if_black > strangeness_if_white;
-            int new_strange = (cut_black ? strangeness_if_black : strangeness_if_white);
-            boolean do_cut = this.STRANGENESS < new_strange;
-
-            if (! do_cut) return;
-
-            if (cut_black)  {
-                sweep(black);
-                this.BLACKS -= black.size();
-            } else {
-                sweep(white);
-                this.WHITES -= white.size();
-            }
-            this.STRANGENESS = new_strange;
-        }
     }
 }
