@@ -1,11 +1,18 @@
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE TupleSections #-}
 import Data.Traversable
+import qualified Data.Semigroup as S
 import Data.Monoid
 import Control.Monad
 import qualified Data.Map as M
+
+newtype EndoKleisli m a = EndoKleisli { appEndoKleisli :: Monad m => a -> m a }
+
+instance S.Semigroup (EndoKleisli m a) where
+  EndoKleisli f <> EndoKleisli g = EndoKleisli (f >=> g)
 
 data Tree a = Leaf | Node a (Tree a) (Tree a)
   deriving Functor
@@ -50,7 +57,7 @@ do1 d tree = do
 main :: IO ()
 main = do
   n <- readLn
-  tree <- buildtree . mconcat <$> (forM [1..n] (\i -> M.singleton i . map read . words <$> getLine))
+  tree <- buildtree . mconcat <$> forM [1..n] (\i -> M.singleton i . map read . words <$> getLine)
   let d = depth tree
   t <- readLn
-  void $ foldr (>=>) pure (replicate t (do1 d)) tree
+  void $ appEndoKleisli (S.stimes t (EndoKleisli (do1 d))) tree
