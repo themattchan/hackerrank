@@ -5,16 +5,16 @@
 #include <assert.h>
 #include <limits.h>
 #include <stdbool.h>
-typedef struct {
-	int priority;
-	uint16_t vertex;
-} node_t;
 
 typedef struct {
 	int * weights;
 	int * nodes; // nodes in minheap order
 	int   size;
 } heap_t;
+
+#define LEFT_CHILD(i)  (((2*i) + 1))
+#define RIGHT_CHILD(i) (((2*i) + 2))
+#define PARENT(i)      (((i-1)/2))
 
 void heapify(heap_t *heap) {
 	// todo
@@ -61,7 +61,7 @@ void dijkstra(int32_t *GRAPH, int *dist, int32_t *prev, int n, int s) {
 	}
 }
 
-int main(){
+int main() {
 	int t;
 	scanf("%d",&t);
 	for(int a0 = 0; a0 < t; a0++) {
