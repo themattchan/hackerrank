@@ -6,13 +6,18 @@
 import Data.Traversable
 import qualified Data.Semigroup as S
 import Data.Monoid
+import Control.Arrow (Kleisli(..))
+import qualified Control.Category as Cat
 import Control.Monad
 import qualified Data.Map as M
 
-newtype EndoKleisli m a = EndoKleisli { appEndoKleisli :: Monad m => a -> m a }
-
-instance S.Semigroup (EndoKleisli m a) where
-  EndoKleisli f <> EndoKleisli g = EndoKleisli (f >=> g)
+-- an endomorphic arrow in some category
+newtype EndoCat c a = EndoCat { appCat :: Cat.Category c => c a a }
+instance S.Semigroup (EndoCat c a) where
+  EndoCat f <> EndoCat g = EndoCat (g Cat.. f)
+instance Monoid (EndoCat c a) where
+  mempty = EndoCat Cat.id
+  mappend = (<>)
 
 data Tree a = Leaf | Node a (Tree a) (Tree a)
   deriving Functor
@@ -60,4 +65,4 @@ main = do
   tree <- buildtree . mconcat <$> forM [1..n] (\i -> M.singleton i . map read . words <$> getLine)
   let d = depth tree
   t <- readLn
-  void $ appEndoKleisli (S.stimes t (EndoKleisli (do1 d))) tree
+  void $ runKleisli (appCat (S.stimes t (EndoCat (Kleisli (do1 d))))) tree
