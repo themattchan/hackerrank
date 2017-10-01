@@ -10,9 +10,9 @@ class IsBST {
     boolean checkBST(Node root) {
         if (root == null) return true;
 
-        Any l = foldMap(n -> new Any(n.data < root.data), root.left).getMonoid();
-        Any r = foldMap(n -> new Any(n.data > root.data), root.right).getMonoid();
-        return l.mappend(r).getAny() && checkBST(root.left) && checkBST(root.right);
+        All l = foldMap(n -> new All(n.data < root.data), root.left).getMonoid();
+        All r = foldMap(n -> new All(n.data > root.data), root.right).getMonoid();
+        return l.mappend(r).getAll() && checkBST(root.left) && checkBST(root.right);
     }
 
     interface Monoid<T> {
@@ -21,27 +21,27 @@ class IsBST {
         Monoid<T> mappend(Monoid<T> that);
         T getMonoid();
     }
-    class Any implements Monoid<Any> {
+    class All implements Monoid<All> {
         boolean b;
-        Any() {
+        All() {
             this.b = false;
         }
-        Any(boolean b) {
+        All(boolean b) {
             this.b = b;
         }
-        public boolean getAny() {
+        public boolean getAll() {
             return b;
         }
-        public Any mempty() {
-            return new Any();
+        public All mempty() {
+            return new All();
         }
-        public Any mappend(Any that) {
-            return new Any(this.getAny() || that.getAny());
+        public All mappend(All that) {
+            return new All(this.getAll() && that.getAll());
         }
-        public Monoid<Any> mappend(Monoid<Any> that) {
+        public Monoid<All> mappend(Monoid<All> that) {
             return this.mappend(that.getMonoid());
         }
-        public Any getMonoid() {
+        public All getMonoid() {
             return this;
         }
     }
