@@ -21,5 +21,5 @@ int main()
 	}
 
 	printf("%s", time);
-    return 0;
+	return 0;
 }

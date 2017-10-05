@@ -25,14 +25,10 @@ int main()
 	char *str;
 	str = (char*) malloc(10000 * sizeof(char));
 
-	while (n > 0) {
+	while (n--) {
 		memset(str, 0, strlen(str));
 		scanf("%s", str);
-		if (funny(str))
-			printf("Funny\n");
-		else
-			printf("Not Funny\n");
-		n--;
+		printf("%s\n", funny(str) ? "Funny" : "Not Funny");
 	}
 
 	free(str);

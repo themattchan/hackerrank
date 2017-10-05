@@ -24,13 +24,30 @@ xorTo n = case n `mod` 4 of
             3 -> 0
             _ -> error "impossible"
 
+isOdd n = n `mod` 2 == 1
+isEven n = n `mod` 2 == 0
+
+makeEven n | isEven n = n
+           | otherwise = n-1
+
+-- https://math.stackexchange.com/questions/1558404/finding-xor-of-all-even-numbers-from-n-to-m
+xorEvensTo :: Integer -> Integer
+xorEvensTo n = case (makeEven n) `mod` 8 of
+            0 -> n
+            2 -> 2
+            4 -> n+2
+            6 -> 0
+            _ -> error "impossible"
+
+xorEvensRange lo hi = xorEvensTo hi `xor` xorEvensTo (lo-1)
 
 xorRange :: Integer -> Integer -> Integer
 xorRange lo hi = belows `xor` bounds
   where
     belows | (hi-lo+1) `mod` 2 == 1 = xorTo (lo-1)
            | otherwise = 0
-    bounds = foldl' xor 0 [hi, hi-2 .. lo]
+    bounds | isEven hi = xorEvensRange lo hi `xor` (if isOdd lo then lo else 0)
+           | otherwise = xorEvensRange lo hi `xor` ((hi-lo+1) `mod` 2)
 
 main :: IO ()
 main = do
