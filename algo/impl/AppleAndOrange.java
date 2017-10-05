@@ -23,7 +23,7 @@ public class Solution {
         int oranges = 0;
         for (int i = 0; i < n; i++){
             int orange = in.nextInt();
-            if (a + orange >= s && a + orange <= t) oranges++;
+            if (b + orange >= s && b + orange <= t) oranges++;
         }
         System.out.println(oranges);
     }
