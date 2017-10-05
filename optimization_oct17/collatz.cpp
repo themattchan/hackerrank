@@ -22,7 +22,7 @@ uint16_t collatzSequenceLen(uint64_t n) {
   return len;
 }
 
-static uint16_t COLLATZ[5003];
+uint16_t COLLATZ[5003];
 void collatzSeqMemo() {
   for (int i = 0; i < 5003; i++) {
     COLLATZ[i] = collatzSequenceLen(i);
