@@ -9,8 +9,9 @@
 #include <stdint.h>
 
 int main() {
-	char *c;
-	scanf("%s", c);
+	char buf[65535];
+	fgets(buf, sizeof(buf), stdin);
+	char* c = buf;
 	// upper 6 bits
 	uint32_t count = 0x3f << 26;
 	while (*c) {
