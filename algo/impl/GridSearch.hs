@@ -12,7 +12,7 @@ main = do
       putStrLn $ bool "NO" "YES" (search small big)
 
 search :: [String] -> [String] -> Bool
-search needle@(n:ns) =
+search (n:ns) =
   any (\(h:hs) -> any (\i -> matchRest ns (map (drop i) hs)) (findStarts n h)) . init . tails
   where
     findStarts targ s =
