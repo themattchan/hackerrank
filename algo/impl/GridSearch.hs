@@ -22,5 +22,4 @@ search needle@(n:ns) =
                         ]
 
     matchRest ns hs
-      | length hs >= length ns = and $ zipWith isPrefixOf ns hs
-      | otherwise = False
+      = length hs >= length ns && and (zipWith isPrefixOf ns hs)
