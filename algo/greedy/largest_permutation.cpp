@@ -9,25 +9,31 @@ int main() {
   int N,K;
   cin >> N >> K;
 
-  int A[N+1];
+  int A[N];
   int I[N+1];
 
-  for (int i=1; i<=N; i++) {
+  for (int i=0; i<N; i++) {
     cin >> A[i];
     I[A[i]] = i;
   }
 
+
+  // at MOST K swaps!
+  // what is the stopping condition?
   for (int i=0; i<K && i<N; i++) {
+    cout << "i IS " << i  <<endl;
+    if (A[i] == N-i) continue;
+
     // swap number N-i with number at front
     // 1. replace the entry in A of N-i with the thing at the head
-    A[I[N-i]] = A[i+1];
-    // 2. the thing prev at A[i+1] has moved to N-i's old loc
-    I[A[i+1]] = I[N-1];
+    A[I[N-i]] = A[i];
+    // 2. the thing prev at A[i] has moved to N-i's old loc
+    I[A[i]] = I[N-i];
     // 3. actually move N-i up front
-    A[i+1] = N-i;
+    A[i] = N-i;
     // 4. N-i is now at the front
-    I[N-1] = i+1;
+    I[N-i] = i;
   }
-  for (int i=1; i<=N; i++) cout << A[i] << " ";
-  cout << endl;
+
+  for (int i=0; i<N; i++) cout << A[i] << " ";
 }
