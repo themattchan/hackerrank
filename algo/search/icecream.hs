@@ -23,14 +23,14 @@ icecream tot n
   . zip [1..]              -- index the costs
   where
     find :: Int -> [(Int,Int)] -> First [Int]
-    find len ((i,c):ics) = (i:) <$> binsearch (len-1) (tot-c) ics
+    find len ((i,c):ics) = (i:) <$> binsearch (tot-c)(len-1)  ics
 
     binsearch :: Int -> Int -> [(Int,Int)] -> First [Int]
     binsearch _ _ [] = mempty
-    binsearch n t xs
+    binsearch t n xs
       | x == t    = First (Just [i])
-      | x < t     = binsearch rn t r
-      | otherwise = binsearch ln t l
+      | x < t     = binsearch t rn r
+      | otherwise = binsearch t ln l
       where
         n' = n `div` 2
         (ln,rn) | n `mod` 2 == 0 = (n',n'-1)
