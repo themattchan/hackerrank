@@ -14,12 +14,13 @@ main = do
 
 
 icecream :: Int -> Int -> [Int] -> [Int]
-icecream tot n = sort . fromMaybe [] . getFirst
-               . foldMap (uncurry find) -- do binsearch on each tail
-               . zip [n,n-1..]          -- annot each tail w/ length
-               . init . tails           -- tails nonempty
-               . sortOn snd             -- sort by cost
-               . zip [1..]              -- index the costs
+icecream tot n
+  = sort . fromMaybe [] . getFirst
+  . foldMap (uncurry find) -- do binsearch on each tail
+  . zip [n,n-1..]          -- annot each tail w/ length
+  . init . tails           -- tails nonempty
+  . sortOn snd             -- sort by cost
+  . zip [1..]              -- index the costs
   where
     find :: Int -> [(Int,Int)] -> First [Int]
     find len ((i,c):ics) = (i:) <$> binsearch (len-1) (tot-c) ics
