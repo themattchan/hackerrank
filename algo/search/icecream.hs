@@ -14,8 +14,7 @@ main = do
 
 
 icecream :: Int -> Int -> [Int] -> [Int]
-icecream tot n = sort
-               . fromMaybe [] . getFirst
+icecream tot n = sort . fromMaybe [] . getFirst
                . foldMap (uncurry find) -- do binsearch on each tail
                . zip [n,n-1..]          -- annot each tail w/ length
                . init . tails           -- tails nonempty
