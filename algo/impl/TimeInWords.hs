@@ -7,7 +7,7 @@ time hr mins = unwords (ss hr mins)
     norm m | m > 30    = 60 - m
            | otherwise = m
 
-    distS m h | m > 30    = ["to", units (mod (h+1) 12)]
+    distS m h | m > 30    = ["to"  , units (mod (h+1) 12)]
               | otherwise = ["past", units h]
 
     minS m | m == 15   = ["quarter"]
@@ -25,5 +25,6 @@ time hr mins = unwords (ss hr mins)
     ss h m | m == 0    = units h : ["o' clock"]
            | otherwise = minS (norm m) ++ distS m h
 
-    units = (!!) ["","one", "two","three","four","five","six","seven","eight","nine","ten"
+    units = (!!) [""
+                 ,"one", "two","three","four","five","six","seven","eight","nine","ten"
                  ,"eleven","twelve","thirteen","fourteen","fifteen"]
