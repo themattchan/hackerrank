@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
+/* #include <stdint.h>
+ * #include <string.h> */
 
-#define GET(arr,i) ((i)<0?0:arr[i])
+#define GET(arr,i) (((i) < 0) ? (0) : ((arr)[i]))
 #define MAX(x,y) (x<y?y:x)
 
 int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
@@ -12,20 +12,19 @@ int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
 	int* new;
 	new = calloc(lenxs, sizeof(int));
 
-	for (size_t j = 0; j < lenys; j++) {
+	for (int j = 0; j < (int)lenys; j++) {
 		char y = ys[j];
-		for (size_t i = 0; i < lenxs; i++) {
+		for (int i = 0; i < (int)lenxs; i++) {
 			if (y == xs[i]) {
+				int a = 0;
 				new[i] = 1 + GET(old,i-1);
 			} else {
-				int a =  GET(new,i-1);
-				int b =  GET(old,i);
+				int a = GET(new,i-1);
+				int b = GET(old,i);
+
 				new[i] = MAX(a,b);
 			}
 		}
-		printf("ITERATION: %d\n", j);
-		printf("OLD:: "); for (int a=0;a<lenxs;a++) { printf ("%d ",GET(old,a)); } printf("\n");
-		printf("NEW:: ");for (int a=0;a<lenxs;a++) { printf ("%d ",GET(new,a)); } printf("\n");
 		int* tmp = old;
 		old = new;
 		new = tmp;
@@ -33,7 +32,6 @@ int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
 	}
 
 	int res = GET(old, lenxs-1);
-	printf ("RES:: %d\n",res);
 	free(old); free(new);
 	return res;
 }
@@ -46,7 +44,5 @@ int main () {
 	size_t xslen = strlen(xs);
 	size_t yslen = strlen(ys);
 
-	printf ("%d\n",xslen);
-	printf ("%d\n",yslen);
 	printf ("%d\n", lcs(xs,xslen, ys,yslen));
 }
