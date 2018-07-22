@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#define GET(arr,i) (i<0?0:arr[i])
+#define GET(arr,i) ((i)<0?0:arr[i])
 #define MAX(x,y) (x<y?y:x)
 
 int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
@@ -18,17 +18,22 @@ int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
 			if (y == xs[i]) {
 				new[i] = 1 + GET(old,i-1);
 			} else {
-				int a =  xGET(new,i-1);
+				int a =  GET(new,i-1);
 				int b =  GET(old,i);
 				new[i] = MAX(a,b);
 			}
 		}
+		printf("ITERATION: %d\n", j);
+		printf("OLD:: "); for (int a=0;a<lenxs;a++) { printf ("%d ",GET(old,a)); } printf("\n");
+		printf("NEW:: ");for (int a=0;a<lenxs;a++) { printf ("%d ",GET(new,a)); } printf("\n");
 		int* tmp = old;
 		old = new;
 		new = tmp;
+
 	}
 
 	int res = GET(old, lenxs-1);
+	printf ("RES:: %d\n",res);
 	free(old); free(new);
 	return res;
 }
