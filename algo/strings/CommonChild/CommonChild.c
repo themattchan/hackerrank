@@ -12,7 +12,6 @@ int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
 		char y = ys[j];
 		for (int i = 0; i < (int)lenxs; i++) {
 			if (y == xs[i]) {
-				int a = 0;
 				new[i] = 1 + GET(old,i-1);
 			} else {
 				int a = GET(new,i-1);
