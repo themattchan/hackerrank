@@ -1,16 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-/* #include <stdint.h>
- * #include <string.h> */
 
-#define GET(arr,i) (((i) < 0) ? (0) : ((arr)[i]))
+#define GET(arr,i) (i<0?0:arr[i])
 #define MAX(x,y) (x<y?y:x)
 
 int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
-	int* old;
-	old = calloc(lenxs, sizeof(int));
-	int* new;
-	new = calloc(lenxs, sizeof(int));
+	int* old = calloc(lenxs, sizeof(int));
+	int* new = calloc(lenxs, sizeof(int));
 
 	for (int j = 0; j < (int)lenys; j++) {
 		char y = ys[j];
@@ -25,10 +21,10 @@ int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
 				new[i] = MAX(a,b);
 			}
 		}
+
 		int* tmp = old;
 		old = new;
 		new = tmp;
-
 	}
 
 	int res = GET(old, lenxs-1);
@@ -41,6 +37,7 @@ int main () {
 	char xs[10000];
 	char ys[10000];
 	gets(xs); gets(ys);
+
 	size_t xslen = strlen(xs);
 	size_t yslen = strlen(ys);
 
