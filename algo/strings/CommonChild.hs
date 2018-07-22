@@ -1,21 +1,22 @@
 import Control.Monad
 import qualified Data.Array as A
 
-lcs xs ys = a A.! (0,0)
+lcs xs ys = a A.! (lxs,lys)
   where
-    a = A.array ((0,0), (lxs, lys)) $ inits ++ go
+    a = A.array ((0,0), (lxs, lys)) go
 
-    inits =  [((i,lys), 0) | i <- [0..lxs]] ++ [((lxs,j), 0) | j <- [0..lys]]
+    getA (i,j) | i < 0 || j < 0 = 0
+               | otherwise = a A.! (i,j)
 
     go = [ ((i,j),
             if x == y
-            then 1 + a A.! (i+1,j+1)
-            else max (a A.! (i+1,j)) (a A.! (i,j+1)))
+            then 1 + getA (i-1,j-1)
+            else max (getA (i-1,j)) (getA (i,j-1)))
          | (i,x) <- zip [0..] xs, (j,y) <- zip [0..] ys
          ]
 
-    lxs = length xs
-    lys = length ys
+    lxs = length xs -1
+    lys = length ys -1
 
 main :: IO()
 main = do

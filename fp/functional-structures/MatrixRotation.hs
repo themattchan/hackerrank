@@ -51,10 +51,12 @@ unrings (Matrix m n) rs = rPosToIdx . lookupR . idxToRPos
         (i,j)= --trace ("level " ++ show l++ "numPosOffs " ++ show (length posOffs) ) $
                --traceShowId
                posOffs !! p
-        posOffs = [(0,j) | j <- [0..sn-1]]
-                  ++ [(i,sn-1) | i<- [1..sm-1]]
-                  ++ [(sm-1,j)|j<-[sn-2, sn-3..0]]
-                  ++ [(i,0)|i<-[sm-2,sm-3..1]]
+        posOffs = take sn [(0,j) | j <- [0..]] -- top
+                ++ reverse (take sn [(
+        -- posOffs = [(0,j) | j <- [0..sn-1]]
+        --           ++ [(i,sn-1) | i<- [1..sm-1]]
+        --           ++ [(sm-1,j)|j<-[sn-2, sn-3..0]]
+        --           ++ [(i,0)|i<-[sm-2,sm-3..1]]
         sm = m - (2*(l-1))
         sn = n - (2*(l-1))
 
