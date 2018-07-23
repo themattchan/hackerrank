@@ -98,8 +98,6 @@ lcs4 xs ys = go initRow ys
 lcs5 xs ys = ST.runST $ do
     old <- AM.newArray (0,lxs) 0 :: ST.ST s (AM.STUArray s Int Int)
     new <- AM.newArray (0,lxs) 0 :: ST.ST s (AM.STUArray s Int Int)
-    AM.writeArray old 0 0
-    AM.writeArray new 0 0
     (result, _) <- foldM go (old,new) ys
     AM.readArray result lxs
   where
@@ -120,8 +118,6 @@ lcs5 xs ys = ST.runST $ do
 lcs6 xs ys = do
     old <- AM.newArray (0,lxs) 0 :: IO (AM.IOUArray Int Int)
     new <- AM.newArray (0,lxs) 0 :: IO (AM.IOUArray Int Int)
-    AM.writeArray old 0 0
-    AM.writeArray new 0 0
     (result, _) <- foldM go (old, new) ys
     AM.readArray result lxs
   where
