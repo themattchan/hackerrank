@@ -31,7 +31,8 @@ int lcs (char* xs, size_t lenxs, char* ys, size_t lenys) {
 	return res;
 }
 
-
+// benchmark
+// on input05: ./CommonChildC  0.06s user 0.00s system 94% cpu 0.062 total
 int main () {
 	char xs[10000];
 	char ys[10000];

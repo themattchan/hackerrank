@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+{-# OPTIONS_GHC -O2 #-}
 import Debug.Trace
 import Control.Monad
 import qualified Control.Monad.ST as ST
@@ -5,6 +7,8 @@ import qualified Data.Array as A
 import qualified Data.Array.MArray as AM
 import qualified Data.Array.ST as AM
 import qualified Data.Array.IO as AM
+import Data.List
+import Control.Arrow ((&&&))
 
 --------------------------------------------------------------------------------
 -- save whole table (very slow for large input)
@@ -58,7 +62,8 @@ lcs3 xs ys =  go initRow ys
             | otherwise = a !! i
 
     go old [] = old
-    go old (y:ys') = trace ("NEW: " ++ show new) $  go new ys'
+    go old (y:ys') = -- trace ("NEW: " ++ show new) $
+                     go new ys'
       where
         new =
           [ if x == y
@@ -73,28 +78,71 @@ lcs3 xs ys =  go initRow ys
 
 -- turn the production of the new list into a fold of the old list, since
 -- we only need a square...
+-- on input 05: ./CommonChild  10.89s user 1.43s system 97% cpu 12.674 total
 lcs4 xs ys = go initRow ys
   where
     initRow = map (const 0) xs
 
     go old [] = old
     go old (y:ys') = -- trace ("NEW: " ++ show new) $
-                go new ys'
+                     go new ys'
       where
-        new = reverse
-            . snd
-            . foldl (\(ij1, prod) ((i1j1, i1j), x) ->
-                       let this = if x == y then 1+i1j1 else max i1j ij1
-                       in (this, this : prod)
-                    )
-                    (0, [])
-            . zip old'
+        gen _ [] = []
+        gen p (((i1j1, i1j),x) : rest)
+          = let t = if x == y then 1 + i1j1 else max i1j p
+            in t : gen t rest
+
+        new = gen 0
+            . zip (zip (0 : old) old)
             $ xs
 
-        old' = zip (0 : old) old
+--------------------------------------------------------------------------------
+
+-- use recursion combinators
+-- think of this as producing "sliding L's"
+-- TODO make this more pointfree
+--
+-- on input05: ./CommonChild  30.97s user 5.76s system 91% cpu 39.954 total
+-- Note: the state monad that mapAccumL uses is really slow
+lcs41 :: String -> String -> Int
+lcs41 xs = fst . foldl' go (0, map (const 0) xs)
+  where
+    go (_, old) y
+      = mapAccumL (\p (i1j1, i1j, x) -> let t = if x == y then 1 + i1j1 else max i1j p in (t,t)) 0
+      $ zip3 (0 : old) old xs
+
+-- on input05: ./CommonChild  9.52s user 1.47s system 98% cpu 11.206 total
+lcs42 :: String -> String -> Int
+lcs42 xs = last . foldl' go (map (const 0) xs)
+  where
+    go old y
+      = unfoldr (\(p, oo) -> case oo of
+                    [] -> Nothing
+                    (i1j1, i1j, x):oo' ->
+                      let t = if x == y then 1 + i1j1 else max i1j p
+                      in Just (t, (t, oo'))
+                )
+      . (0, )
+      $ zip3 (0 : old) old xs
+
+-- ./CommonChild  8.13s user 0.96s system 97% cpu 9.358 total
+lcs43 :: String -> String -> Int
+lcs43 xs = last . foldl' go (map (const 0) xs)
+  where
+    go old y
+      = unfoldr (\oo -> case oo of
+                    (_,_,[],[]) -> Nothing
+                    (p, i1j1:old0', i1j:old', x:xs') ->
+                      let t = if x == y then 1 + i1j1 else max i1j p
+                      in Just (t, (t, old0', old', xs'))
+                    _ -> Nothing
+                )
+                (0, 0:old, old, xs)
+
 
 --------------------------------------------------------------------------------
 -- save previous row only
+-- on input 05: ./CommonChild  0.32s user 0.02s system 88% cpu 0.384 total
 lcs5 xs ys = ST.runST $ do
     old <- AM.newArray (0,lxs) 0 :: ST.ST s (AM.STUArray s Int Int)
     new <- AM.newArray (0,lxs) 0 :: ST.ST s (AM.STUArray s Int Int)
@@ -115,6 +163,7 @@ lcs5 xs ys = ST.runST $ do
 
 --------------------------------------------------------------------------------
 
+-- on input 05: ./CommonChild  0.39s user 0.02s system 83% cpu 0.483 total
 lcs6 xs ys = do
     old <- AM.newArray (0,lxs) 0 :: IO (AM.IOUArray Int Int)
     new <- AM.newArray (0,lxs) 0 :: IO (AM.IOUArray Int Int)
@@ -137,4 +186,5 @@ main :: IO ()
 main = do
   s1 <- getLine
   s2 <- getLine
-  print =<< lcs6 s1 s2
+  print $ lcs5 s1 s2
+--  print =<< lcs6 s1 s2
