@@ -18,17 +18,15 @@ int main () {
 	gets(pass);
 	char* cur = pass;
 	while (*cur) {
+		char c = *cur++;
 		len--;
-		char c = *cur;
 		if (isdigit(c)) d++;
 		if (islower(c)) l++;
 		if (isupper(c)) u++;
 		if (ispunct(c)) p++;
-		cur++;
 		if (len <= 0 && d && l && u && p) break;
 	}
 
 	int need = MAX(len, NEED(d)+NEED(l)+NEED(u)+NEED(p));
 	printf("%d\n",need);
-
 }
