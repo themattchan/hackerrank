@@ -20,6 +20,19 @@ import qualified Data.Map as M
 m :: Int
 m = 10^8 + 7
 
+-- ncr n k = (n!) / (k!(n-k)!)
+myncr :: Int -> Int -> Integer
+myncr n k = (f n `div` (f k * f (n-k))) `mod` m
+  where
+    f x = facs !! x
+
+    m :: Integer
+    m = 10^8 + 7
+
+    facs :: [Integer]
+    facs = go 1 1 where go p n = p : go (p*n) (n+1)
+
+{-
 -- 0 <= K <= N
 ncr :: Int -> Int -> Int
 ncr n k = a A.! (n,k)
@@ -110,19 +123,11 @@ ncrIOs nks = do
             [1..maxN]
 
   fill nks
+-}
 
 main :: IO ()
 main = do
   t <- readLn
   nks <- replicateM t $ do
     [n,k] <- map read . words <$> getLine
-    return (n,k)
-  let nks' = M.fromList $ map (, ()) nks
-  m <- ncrIOs nks'
-  mapM_ (\x -> case M.lookup x m of
-            -- if not in map, then something was 0
-            Nothing -> print 1 --  "ERROR: " ++ show x
-            Just y -> print y
-           --print . (m M.!)
-        )
-        nks
+    print $ myncr n k
