@@ -8,14 +8,15 @@
 int main () {
 	int n;
 	scanf("%d\n", &n);
+	char pass[n];
+	gets(pass);
+
 	int len = 6;
 	int d = 0;
 	int l = 0;
 	int u = 0;
 	int p = 0;
 
-	char pass[n];
-	gets(pass);
 	char* cur = pass;
 	while (*cur) {
 		char c = *cur++;
