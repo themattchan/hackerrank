@@ -1,5 +1,4 @@
 import Control.Applicative
-import Data.List (intercalate)
 
 solve :: Int -> [Int] -> String -> Maybe String
 solve n [] rops
