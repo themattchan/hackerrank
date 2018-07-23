@@ -1,4 +1,4 @@
-{-# LANGUAGE RankNTypes, ScopedTypeVariables #-}
+{-# LANGUAGE RankNTypes, ScopedTypeVariables,TupleSections #-}
 {-# OPTIONS_GHC -O2 #-}
 
 import qualified Data.Array as A
@@ -7,7 +7,11 @@ import qualified Data.Array.ST as AM
 import qualified Data.Array.IO as AM
 import qualified Control.Monad.ST as ST
 import Control.Monad
+import Data.Monoid
+import Data.Semigroup (Max(..))
+import qualified Control.Monad.Cont as Cont
 
+import qualified Data.Map as M
 --               1                                   , K = 0
 -- count(N, K) = 1                                   , K = N
 --               count(N-1, K-1) + count(N-1, K),    , 0 < K < N
@@ -73,9 +77,52 @@ ncrIO n k = do
           AM.writeArray arr j p
       AM.readArray arr k
 
+-- process all queries at once.
+ncrIOs :: M.Map (Int,Int) a -> IO (M.Map (Int,Int) Int)
+ncrIOs nks = do
+  let (maxN, _) = fst $ M.findMax nks
+  let (Max maxK) = M.foldMapWithKey (\(n,k) _ -> pure k) nks
+
+  arr <- AM.newArray (0,maxK+1) 0 :: IO (AM.IOUArray Int Int)
+  AM.writeArray arr 0 1
+
+-- this should be made into some sort of coroutine
+-- so we will only compute until the next needed (n,k)
+-- and unfold it during traversal of nks
+-- but i'm too lazy to figure that out
+  let
+    fill :: M.Map (Int,Int) a -> IO (M.Map (Int,Int) Int)
+    fill needed = do
+      foldM (\ret0 i ->
+                foldM (\ret1 j -> do
+                          x <- AM.readArray arr (j-1)
+                          y <- AM.readArray arr j
+                          let !p = (x + y) `mod` m
+                          AM.writeArray arr j p
+                          if (i,j) `M.member` needed
+                            then return (M.insert (i,j) p ret1)
+                            else return ret1
+                      )
+                      ret0
+                      (reverse [1..min i maxK])
+            )
+            M.empty
+            [1..maxN]
+
+  fill nks
+
 main :: IO ()
 main = do
   t <- readLn
-  replicateM_ t $ do
+  nks <- replicateM t $ do
     [n,k] <- map read . words <$> getLine
-    print =<< ncrIO n k
+    return (n,k)
+  let nks' = M.fromList $ map (, ()) nks
+  m <- ncrIOs nks'
+  mapM_ (\x -> case M.lookup x m of
+            -- if not in map, then something was 0
+            Nothing -> print 1 --  "ERROR: " ++ show x
+            Just y -> print y
+           --print . (m M.!)
+        )
+        nks
