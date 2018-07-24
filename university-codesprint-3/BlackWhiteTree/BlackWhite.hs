@@ -38,7 +38,7 @@ instance Bounded IW where
   maxBound = IW (P mempty maxBound)
   minBound = IW (P mempty minBound)
 
-type BestForSub = (Max IW, Min IW)
+type BestForSub = P (Max IW) (Min IW)
 
 -- Solution:
 -- At a leaf: can either choose or not
@@ -56,7 +56,7 @@ type BestForSub = (Max IW, Min IW)
 maxStrange :: (Int -> Int) -> Graph.Tree Int -> P BestForSub [P [Int] Int]
 maxStrange colour (Graph.Node x []) =
   let !this = P [x] (colour x)
-      !w = (Max (IW this), Min (IW this))
+      !w = P (Max (IW this)) (Min (IW this))
   in P w [P [] 0, this]
 
 maxStrange colour (Graph.Node x ts) =
@@ -71,12 +71,12 @@ maxStrange colour (Graph.Node x ts) =
         $ ts'
       !thisMax = bimap (x:) (+ colour x) a
       !thisMin = bimap (x:) (+ colour x) b
-      w' = (Max (IW thisMax), (Min (IW thisMin)))
+      w' = P (Max (IW thisMax)) (Min (IW thisMin))
       !w'' = w <> w'
   in P w'' [P [] 0 , thisMax, thisMin]
 
 choose :: BestForSub -> P [Int] Int
-choose (Max (IW (P chosenMax a)), Min (IW (P chosenMin b)))
+choose (P (Max (IW (P chosenMax a))) (Min (IW (P chosenMin b))))
   | abs a > abs b = P chosenMax a
   | otherwise = P chosenMin (abs b)
 
