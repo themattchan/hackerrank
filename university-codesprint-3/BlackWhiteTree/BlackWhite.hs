@@ -8,19 +8,18 @@ import Control.Arrow ((&&&))
 import Debug.Trace
 import qualified Data.Graph as Graph
 import qualified Data.Array.Unboxed as Array
-
+import Data.Word
 --https://www.hackerrank.com/contests/university-codesprint-3/challenges/black-white-tree
 main :: IO()
 main = do
   n <- read <$> getLine
-  let weight i | i == 0 = 1
-               | i == 1 = -1
-  colours :: Array.UArray Int Int <- Array.array (1,n) . zip [1..] . map (weight . read) . words <$> getLine
+  colours :: Array.UArray Int Word8 <- Array.array (1,n) . zip [1..] . map read . words <$> getLine
   edges <- replicateM (n-1) $ do
     [i,j]<- map read . words <$> getLine
     return (i,j)
-
-  let colour n = colours Array.! n
+  let weight i | i == 0 = 1
+               | i == 1 = -1
+  let colour n = weight (colours Array.! n)
   let P chosen strangeness = solve colour $ buildTree n edges
   print strangeness
   print (length chosen)
