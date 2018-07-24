@@ -1,14 +1,12 @@
+{-# OPTIONS_GHC -O2 #-}
 {-# LANGUAGE TupleSections #-}
-import Data.Semigroup (Max(..),Min(..))
+import Data.Semigroup (Max(..),Min(..), (<>))
 import Data.Bifunctor
 import Control.Monad
 import Data.List
 import Control.Arrow ((&&&))
 import Debug.Trace
 import qualified Data.Graph as Graph
-import Data.Function
-import Control.Monad.Writer.Lazy
-
 
 main :: IO()
 main = do
@@ -67,7 +65,7 @@ maxStrange colour (Graph.Node x ts) =
                   . unzip
                   )
         . sequence
-        . traceShowId
+--        . traceShowId
         $ ts'
       thisMax = first (x:) a
       thisMin = first (x:) b
