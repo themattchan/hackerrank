@@ -27,7 +27,7 @@ main = do
   putStrLn (unwords . map show . sort $ chosen)
 
 buildTree :: Int -> [(Int,Int)] -> Graph.Tree Int
-buildTree m = traceShowId. head . Graph.components . Graph.buildG (1,m)
+buildTree m = head . Graph.components . Graph.buildG (1,m)
 
 
 --strict pair
@@ -91,7 +91,6 @@ maxStrange colour (Graph.Node x ts) =
                   . unzipP
                   )
         . sequence
---        . traceShowId
         $ ts'
       !thisMax = first (x:) a
       !thisMin = first (x:) b
