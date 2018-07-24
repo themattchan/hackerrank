@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -O2 #-}
-{-# LANGUAGE TupleSections, BangPatterns #-}
+{-# LANGUAGE ScopedTypeVariables, TupleSections, BangPatterns #-}
 import Data.Semigroup (Semigroup(..), Max(..),Min(..), (<>))
 import Data.Bifunctor
 import Control.Monad
@@ -7,20 +7,20 @@ import Data.List
 import Control.Arrow ((&&&))
 import Debug.Trace
 import qualified Data.Graph as Graph
+import qualified Data.Array.Unboxed as Array
 
 --https://www.hackerrank.com/contests/university-codesprint-3/challenges/black-white-tree
 main :: IO()
 main = do
   n <- read <$> getLine
-  colours <- map read . words <$> getLine
+  let weight i | i == 0 = 1
+               | i == 1 = -1
+  colours :: Array.UArray Int Int <- Array.array (1,n) . zip [1..] . map (weight . read) . words <$> getLine
   edges <- replicateM (n-1) $ do
     [i,j]<- map read . words <$> getLine
     return (i,j)
 
-  let colour n = if colours !! (n-1) == 0
-                 then 1 -- white is 1
-                 else -1 -- black is -1
-
+  let colour n = colours Array.! n
   let P chosen strangeness = solve colour $ buildTree n edges
   print strangeness
   print (length chosen)
