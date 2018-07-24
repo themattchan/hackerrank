@@ -26,7 +26,7 @@ main = do
   putStrLn (unwords . map show . sort $ chosen)
 
 buildTree :: Int -> [(Int,Int)] -> Graph.Tree Int
-buildTree m = head . Graph.components . Graph.buildG (1,m)
+buildTree n = head . Graph.components . Graph.buildG (1,n)
 
 -- ignore writer
 newtype IW = IW (P [Int] Int)
