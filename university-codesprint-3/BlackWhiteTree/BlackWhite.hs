@@ -9,7 +9,9 @@ import Debug.Trace
 import qualified Data.Graph as Graph
 import qualified Data.Array.Unboxed as Array
 import Data.Word
+
 --https://www.hackerrank.com/contests/university-codesprint-3/challenges/black-white-tree
+
 main :: IO()
 main = do
   n <- read <$> getLine
@@ -19,7 +21,7 @@ main = do
     return (i,j)
   let weight i | i == 0 = 1
                | i == 1 = -1
-  let colour n = weight (colours Array.! n)
+  let colour = weight . (colours Array.!)
   let P chosen strangeness = solve colour $ buildTree n edges
   print strangeness
   print (length chosen)
@@ -27,34 +29,6 @@ main = do
 
 buildTree :: Int -> [(Int,Int)] -> Graph.Tree Int
 buildTree m = head . Graph.components . Graph.buildG (1,m)
-
-
---strict pair
-data P a b = P !a !b
-fstP (P a _) = a
-sndP (P _ b) = b
-instance Functor (P a) where
-  fmap f (P a b) = P a (f b)
-instance Bifunctor P where
-  bimap f g (P a b) = P (f a) (g b)
-instance Monoid a => Applicative (P a) where
-  pure = P mempty
-  P a f <*> P b x = P (a`mappend`b) (f x)
-instance Monoid a => Monad (P a) where
-  return = P mempty
-  P a x >>= f = let P b y = f x in P (a`mappend`b) y
-instance Foldable (P a) where
-  foldMap f (P a b) = f b
-instance Traversable (P a) where
-  traverse f (P a b) = P a <$> f b
-instance (Semigroup a, Semigroup b) => Semigroup (P a b) where
-  (<>) (P a b) (P x y) = P (a<>x) (b<>y)
-instance (Monoid a, Monoid b) => Monoid (P a b) where
-  mempty = P mempty mempty
-  mappend (P a b) (P x y) = P (a`mappend`x) (b`mappend`y)
-
-unzipP :: [P a b] -> P [a] [b]
-unzipP ps = P (map fstP ps) (map sndP ps)
 
 -- ignore writer
 newtype IW = IW (P [Int] Int)
@@ -67,11 +41,6 @@ instance Bounded IW where
   minBound = IW (P mempty minBound)
 
 type BestForSub = (Max IW, Min IW)
-
-choose :: BestForSub -> P [Int] Int
-choose (Max (IW (P chosenMax a)), Min (IW (P chosenMin b)))
-  | abs a > abs b = P chosenMax a
-  | otherwise = P chosenMin (abs b)
 
 -- Solution:
 -- At a leaf: can either choose or not
@@ -108,5 +77,44 @@ maxStrange colour (Graph.Node x ts) =
       !w'' = w <> w'
   in P w'' [P [] 0 , thisMax, thisMin]
 
+choose :: BestForSub -> P [Int] Int
+choose (Max (IW (P chosenMax a)), Min (IW (P chosenMin b)))
+  | abs a > abs b = P chosenMax a
+  | otherwise = P chosenMin (abs b)
+
 solve :: (Int -> Int) -> Graph.Tree Int -> P [Int] Int
 solve colour = choose . fstP . maxStrange colour
+
+
+--------------------------------------------------------------------------------
+-- strict pair
+data P a b = P !a !b
+
+fstP :: P a b -> a
+fstP (P a _) = a
+
+sndP :: P a b -> b
+sndP (P _ b) = b
+
+unzipP :: [P a b] -> P [a] [b]
+unzipP ps = P (map fstP ps) (map sndP ps)
+
+instance Functor (P a) where
+  fmap f (P a b) = P a (f b)
+instance Bifunctor P where
+  bimap f g (P a b) = P (f a) (g b)
+instance Monoid a => Applicative (P a) where
+  pure = P mempty
+  P a f <*> P b x = P (a`mappend`b) (f x)
+instance Monoid a => Monad (P a) where
+  return = P mempty
+  P a x >>= f = let P b y = f x in P (a`mappend`b) y
+instance Foldable (P a) where
+  foldMap f (P a b) = f b
+instance Traversable (P a) where
+  traverse f (P a b) = P a <$> f b
+instance (Semigroup a, Semigroup b) => Semigroup (P a b) where
+  (<>) (P a b) (P x y) = P (a<>x) (b<>y)
+instance (Monoid a, Monoid b) => Monoid (P a b) where
+  mempty = P mempty mempty
+  mappend (P a b) (P x y) = P (a`mappend`x) (b`mappend`y)
