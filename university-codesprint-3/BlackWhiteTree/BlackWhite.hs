@@ -74,8 +74,19 @@ choose (Max (IW (P chosenMax a)), Min (IW (P chosenMin b)))
   | abs a > abs b = P chosenMax a
   | otherwise = P chosenMin (abs b)
 
--- consider also subtrees only!!!
--- so this is a dynamic programming problem.
+-- Solution:
+-- At a leaf: can either choose or not
+-- At a branch:
+--   1. Find the solution for all subtrees. Because we don't know if it'll be black
+--   heavy or white heavy, record both. Also return the possibility that it is
+--   not chosen.
+--   2. (sequence): Calculate the best combination for all possible choices of
+--   subtrees. Add the branch node weight.
+--   3. If you bubble this up to the top, you will have found the best possible
+--   subtree that includes the root.
+--   4. HOWEVER this is not enough: at any subtree you can decide to stop, and
+--   that tree might be better than the optimal one from the root. Hence we save
+--   all subsolutions (using the writer monad).
 maxStrange :: (Int -> Int) -> Graph.Tree Int -> P BestForSub [P [Int] Int]
 maxStrange colour (Graph.Node x []) =
   let !this = P [x] (colour x)
@@ -87,13 +98,13 @@ maxStrange colour (Graph.Node x ts) =
       (Max (IW a), Min (IW b))
         = foldMap ( (Max &&& Min)
                   . IW
-                  . bimap concat ((+ colour x) . sum)
+                  . bimap concat sum
                   . unzipP
                   )
         . sequence
         $ ts'
-      !thisMax = first (x:) a
-      !thisMin = first (x:) b
+      !thisMax = bimap (x:) (+ colour x) a
+      !thisMin = bimap (x:) (+ colour x) b
       w' = (Max (IW thisMax), (Min (IW thisMin)))
       !w'' = w <> w'
   in P w'' [P [] 0 , thisMax, thisMin]
