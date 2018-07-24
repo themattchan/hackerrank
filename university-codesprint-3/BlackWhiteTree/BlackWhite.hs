@@ -16,9 +16,7 @@ main :: IO()
 main = do
   n <- read <$> getLine
   colours :: Array.UArray Int Word8 <- Array.array (1,n) . zip [1..] . map read . words <$> getLine
-  edges <- replicateM (n-1) $ do
-    [i,j]<- map read . words <$> getLine
-    return (i,j)
+  edges <- replicateM (n-1) $ do [i,j] <- map read . words <$> getLine ; return (i,j)
   let weight i | i == 0 = 1
                | i == 1 = -1
   let colour = weight . (colours Array.!)
