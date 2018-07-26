@@ -1,17 +1,21 @@
-
+{-# OPTIONS_GHC -O2 #-}
 queens :: Int -> Int
-queens = pick <*> poss
+queens = pick . poss
   where
-    poss n = (,) <$> [1..n] <*> [1..n]
+    poss n = [ [(row,col) | col <- [1..n]] | row <- [1..n] ]
 
-    pick 0 _ = 1
-    pick _ [] = 0
-    pick n ps = sum [pick (n-1) (elim p ps) | p <- ps]
+    pick :: [[(Int,Int)]] -> Int
+    pick [] = 0
+    pick [p] = length p
+    pick (p:ps) = sum [ pick (map (elim x) ps) | x <- p]
 
-    elim (i,j) = filter bads
+    elim (i,j) = filter goods
       where
-        bads (x,y) = x /= i && y /= j
-                && (abs (x-i) == abs (y-j))
-                && ((x,y) `notElem` [(i `f` dx, j `f` dy) | (dx,dy) <- [(2,1), (1,2)], f <- [(+),(-)]])
+        goods (x,y) = not $
+          x == i -- same row
+          || y == j -- same col
+          || (abs(x-i) == abs(y-j)) -- diagonal
+          -- L shape
+          || ((x,y) `elem` [(i `f` dx, j `g` dy) | (dx,dy) <- [(2,1), (1,2)], f <- [(+),(-)], g <- [(+),(-)]])
 
 main = print . queens =<< readLn
