@@ -3,8 +3,13 @@ import Control.Monad
 import Data.Foldable
 import Data.List
 
-data Ring a = Ring Int {-m: number of ROWS-} Int {-n: number of COLS-} [a]
+main :: IO ()
+main = mainFast
 
+-- Naive approach: too slow for input09
+-- Split into rings, rotate, then recombine
+
+data Ring a = Ring Int {-m: number of ROWS-} Int {-n: number of COLS-} [a]
 
 rings :: Int -> Int -> [[a]] -> [Ring a]
 rings m n xxs
@@ -46,9 +51,19 @@ rotatel r (Ring m n xs) = Ring m n (y++x)
 doIt :: Int -> Int -> Int -> [[a]] -> [[a]]
 doIt m n r = unrings . map (rotatel r) . rings m n
 
-main = do
+mainSlow :: IO ()
+mainSlow = do
   let readLn = map (read @Int) . words <$> getLine
   [m,n,r] <- readLn
   matrix <- replicateM m readLn
 --  putStrLn ""
   traverse_ (putStrLn . unwords . map show) (doIt m n r matrix)
+
+
+--------------------------------------------------------------------------------
+
+-- Fast approach
+-- Read into array, calculate rotated indices, then print things out by lookup
+
+mainFast :: IO ()
+mainFast = undefined
