@@ -183,3 +183,19 @@ node* lca(node *root, int v1, int v2)
 	else
 		return lca(root->right, v1, v2);
 }
+
+
+int maxL(node *node) {
+  while (node->right) node = node->right;
+  return node->data;
+}
+
+int minR(node *node) {
+  while (node->left) node = node->left;
+  return node->data;
+}
+
+bool checkBST(node* root) {
+  return (root->left ? (root->data > maxL(root->left)) && checkBST(root->left) : true)
+      && (root->right ? (root->data < minR(root->right)) && checkBST(root->right) : true);
+	}
