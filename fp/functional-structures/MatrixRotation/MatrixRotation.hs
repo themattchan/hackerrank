@@ -17,11 +17,12 @@ rings m n xxs
   | otherwise = [Ring m n (base xxs)]
   where
     middle = init . tail
-    mxxs = middle xxs
 
-    go xxs = head xxs ++ map last mxxs ++ reverse (last xxs) ++ reverse (map head mxxs)
+    go x = head x ++ map last mx ++ reverse (last x) ++ reverse (map head mx)
+      where mx = middle x
+
     r = go xxs
-    xxs' = map middle mxxs
+    xxs' = map middle (middle xxs)
 
     base [xs] = xs
     base [x,y] = x ++ reverse y
