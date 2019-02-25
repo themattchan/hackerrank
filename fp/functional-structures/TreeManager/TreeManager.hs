@@ -4,10 +4,10 @@ import Data.List (splitAt)
 -- tree zipper: current subtree with stack of paths
 type TZ = (T, [DT])
 
-data T = T Int [T]
+data T = T Int [T]  deriving Show
 
 -- LR zipper of a level
-data DT = DT Int [T] [T]
+data DT = DT Int [T] [T]  deriving Show
 
 tz0 = (T 0 [], [])
 
@@ -25,7 +25,7 @@ interp (T n kids, dts) s = case words s of
 
   ["visit", "right"]
     | (DT dn ls (r:rs) : dts') <- dts
-      -> pure (r, DT dn (T n kids : ls) (rs) : dts')
+      -> pure (r, DT dn (T n kids : ls) rs : dts')
 
   ["visit", "parent"]
     | (DT dn ls rs : dts') <- dts
@@ -33,8 +33,8 @@ interp (T n kids, dts) s = case words s of
 
   ["visit", "child", (read @Int -> x)]
     | length kids >= x ->
-        let (ls, new:rs) = splitAt (x-1) kids in
-          pure (new, DT n ls rs : dts)
+        let (ls, c:rs) = splitAt (x-1) kids in
+          pure (c, DT n ls rs : dts)
 
   ["insert", "left", (read @Int -> x)]
     | (DT dn ls rs : dts') <- dts
@@ -51,7 +51,7 @@ interp (T n kids, dts) s = case words s of
     | (DT dn ls rs : dts') <- dts
       -> pure ( T dn (ls ++ rs), dts')
 
-  _ -> pure (T n kids, dts)
+  _ -> error $ "bad op: "++ s ++ "\n\n" ++ show (T n kids, dts)
 
 
 main = do
