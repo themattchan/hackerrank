@@ -5,7 +5,7 @@ import Data.Maybe
 
 main = do
   t <- readLn
-  replicateM t $ do
+  replicateM_ t $ do
     _ <- getLine
     passes <- words <$> getLine
     inp <- getLine
