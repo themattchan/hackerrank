@@ -2,7 +2,7 @@
 import qualified Data.Array.MArray as A
 import qualified Data.Array.IO as A
 
-import qualified Data.IntMap as IM
+import qualified Data.IntMap.Strict as IM
 import Data.Ord
 
 class Heap h where
@@ -150,6 +150,7 @@ main = do
 
 main = do
   [n,q]<- map (read @Int) . words <$> getLine
+
   let go !n x | n == 0 = return ()
               | otherwise =
         (map (read @Int) . words <$> getLine) >>=
@@ -163,14 +164,9 @@ main = do
 
           -- remove max from i
           [2, i] ->
-            let f Nothing = (Nothing,Nothing)
-                f (Just h) = case deleteMin h of
-                  Nothing -> (Nothing, Nothing)
-                  Just (m, h') -> (Just m, Just h')
-
-                (_, x') = IM.alterF f i x
-            in
-              go (n-1) x'
+            let f Nothing = Nothing
+                f (Just h) = snd <$> deleteMin h
+            in go (n-1) (IM.alter f i x)
 
           -- add c to i
           [3, i, c] ->
