@@ -34,7 +34,7 @@ interp (T n kids, dts) s = case words s of
   ["visit", "child", (read @Int -> x)]
     | length kids >= x ->
         let (ls, c:rs) = splitAt (x-1) kids in
-          pure (c, DT n ls rs : dts)
+          pure (c, DT n (reverse ls) rs : dts)
 
   ["insert", "left", (read @Int -> x)]
     | (DT dn ls rs : dts') <- dts
@@ -49,7 +49,7 @@ interp (T n kids, dts) s = case words s of
 
   ["delete"]
     | (DT dn ls rs : dts') <- dts
-      -> pure ( T dn (ls ++ rs), dts')
+      -> pure ( T dn (reverse ls ++ rs), dts')
 
   _ -> error $ "bad op: "++ s ++ "\n\n" ++ show (T n kids, dts)
 
