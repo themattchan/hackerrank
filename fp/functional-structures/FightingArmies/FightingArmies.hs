@@ -1,4 +1,7 @@
-{-# LANGUAGE BangPatterns, TypeApplications, LambdaCase #-}
+{-# LANGUAGE BangPatterns, TypeApplications, LambdaCase, ScopedTypeVariables #-}
+import qualified Data.Array.MArray as A
+import qualified Data.Array.IO as A
+
 import qualified Data.IntMap as IM
 import Data.Ord
 
@@ -103,38 +106,42 @@ instance Heap BootstrapHeap where
 
 main = do
   [n,q]<- map (read @Int) . words <$> getLine
-  let go !n x | n == 0 = return ()
-              | otherwise =
+  arr :: A.IOArray Int (BootstrapHeap (Down Int)) <- A.newArray (1,n) empty
+
+  let go !q
+        | q == 0 = return ()
+        | otherwise =
         (map (read @Int) . words <$> getLine) >>=
         \case
           -- print max in i
           [1, i] -> do
+            x <- A.readArray arr i
             maybe (pure ()) (\(Down x) -> print x) $
-              findMin (IM.findWithDefault empty i x)
+              findMin x
 
-            go (n-1) x
+            go (q-1)
 
           -- remove max from i
-          [2, i] ->
-            let f Nothing = (Nothing,Nothing)
-                f (Just h) = case deleteMin h of
-                  Nothing -> (Nothing, Nothing)
-                  Just (m, h') -> (Just m, Just h')
-
-                (_, x') = IM.alterF f i x
-            in
-              go (n-1) x'
+          [2, i] -> do
+            x <- A.readArray arr i
+            case deleteMin x of
+              Nothing -> pure ()
+              Just (_, h) ->
+                A.writeArray arr i h
+            go (q-1)
 
           -- add c to i
-          [3, i, c] ->
-            let f Nothing = Just (insert (Down c) empty)
-                f (Just h) = Just (insert (Down c) h)
-            in go (n-1) (IM.alter f i x)
+          [3, i, c] -> do
+            x <- A.readArray arr i
+            A.writeArray arr i (insert (Down c) x)
+            go (q-1)
 
           -- merge i and j
-          [4, i, j] ->
-            let f Nothing = IM.lookup j x -- nothing at i
-                f (Just h) = Just (merge (IM.findWithDefault empty j x) h)
-            in go (n-1) (IM.delete j (IM.alter f i x))
+          [4, i, j] -> do
+            x <- A.readArray arr i
+            y <- A.readArray arr j
+            A.writeArray arr i (merge x y)
+            A.writeArray arr j empty
+            go (q-1)
 
-  go q (mempty :: IM.IntMap (BootstrapHeap (Down Int)))
+  go q
