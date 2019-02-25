@@ -1,6 +1,7 @@
 {-# LANGUAGE BangPatterns, TypeApplications, LambdaCase #-}
 import qualified Data.IntMap as IM
 import Data.Ord
+
 class Heap h where
   empty :: Ord a => h a
   isEmpty :: Ord a => h a -> Bool
@@ -102,7 +103,8 @@ instance Heap BootstrapHeap where
 
 main = do
   [n,q]<- map (read @Int) . words <$> getLine
-  let go !n x =
+  let go !n x | n == 0 = return ()
+              | otherwise =
         (map (read @Int) . words <$> getLine) >>=
         \case
           -- print max in i
