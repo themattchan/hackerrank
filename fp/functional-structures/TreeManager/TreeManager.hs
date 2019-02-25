@@ -29,7 +29,7 @@ interp (T n kids, dts) s = case words s of
 
   ["visit", "parent"]
     | (DT dn ls rs : dts') <- dts
-      -> pure (T dn (ls ++ T n kids : rs), dts')
+      -> pure (T dn (reverse ls ++ T n kids : rs), dts')
 
   ["visit", "child", (read @Int -> x)]
     | length kids >= x ->
