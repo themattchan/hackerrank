@@ -1,10 +1,12 @@
-{-# LANGUAGE BangPatterns, TypeApplications, LambdaCase, ScopedTypeVariables #-}
+{-# LANGUAGE BangPatterns, TypeApplications, LambdaCase, ScopedTypeVariables,Strict #-}
 import qualified Data.Array.MArray as A
 import qualified Data.Array.IO as A
 
+import qualified Data.ByteString.Char8 as B8
 import qualified Data.IntMap.Strict as IM
 import Data.Ord
-
+import Data.List (unfoldr)
+import Data.Char
 class Heap h where
   empty :: Ord a => h a
   isEmpty :: Ord a => h a -> Bool
@@ -149,35 +151,37 @@ main = do
 -}
 
 main = do
-  [n,q]<- map (read @Int) . words <$> getLine
+  bs <- B8.getContents
+--  print $ unfoldr (fmap (fmap (B8.dropWhile isSpace)). B8.readInt) bs
+--  [n,q]<- map (read @Int) . words <$> getLine
+  let (n:q:ns) = unfoldr (fmap (fmap (B8.dropWhile isSpace)). B8.readInt) bs
 
-  let go !n x | n == 0 = return ()
+  let go !n ns x | n == 0 = return ()
               | otherwise =
-        (map (read @Int) . words <$> getLine) >>=
-        \case
+        case ns of
           -- print max in i
-          [1, i] -> do
+          (1 : i : ns') -> do
             maybe (pure ()) (\(Down x) -> print x) $
               findMin (IM.findWithDefault empty i x)
 
-            go (n-1) x
+            go (n-1) ns' x
 
           -- remove max from i
-          [2, i] ->
+          (2 : i : ns') ->
             let f Nothing = Nothing
                 f (Just h) = snd <$> deleteMin h
-            in go (n-1) (IM.alter f i x)
+            in go (n-1) ns' (IM.alter f i x)
 
           -- add c to i
-          [3, i, c] ->
+          (3 : i : c : ns') ->
             let f Nothing = Just (insert (Down c) empty)
                 f (Just h) = Just (insert (Down c) h)
-            in go (n-1) (IM.alter f i x)
+            in go (n-1) ns' (IM.alter f i x)
 
           -- merge i and j
-          [4, i, j] ->
+          (4 : i : j : ns')->
             let f Nothing = IM.lookup j x -- nothing at i
                 f (Just h) = Just (merge (IM.findWithDefault empty j x) h)
-            in go (n-1) (IM.delete j (IM.alter f i x))
+            in go (n-1) ns' (IM.delete j (IM.alter f i x))
 
-  go q (mempty :: IM.IntMap (BootstrapHeap (Down Int)))
+  go q ns (mempty :: IM.IntMap (BootstrapHeap (Down Int)))
