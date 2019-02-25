@@ -138,7 +138,7 @@ main = do
 
   traverse_ (uncurry (go st))
     . uncons
-    . drop 1
+    . tail
     . unfoldr (fmap (fmap (B8.dropWhile isSpace)) . B8.readInt)
     =<< B8.getContents
 
