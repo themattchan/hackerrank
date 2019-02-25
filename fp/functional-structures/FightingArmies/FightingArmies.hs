@@ -1,12 +1,11 @@
 {-# LANGUAGE BangPatterns, TypeApplications, LambdaCase, ScopedTypeVariables,Strict #-}
-import qualified Data.Array.MArray as A
-import qualified Data.Array.IO as A
-
 import qualified Data.ByteString.Char8 as B8
-import qualified Data.IntMap.Strict as IM
-import Data.Ord
-import Data.List (unfoldr)
 import Data.Char
+import Data.Foldable
+import qualified Data.IntMap.Strict as IM
+import Data.List (unfoldr, uncons)
+import Data.Ord
+
 class Heap h where
   empty :: Ord a => h a
   isEmpty :: Ord a => h a -> Bool
@@ -105,83 +104,47 @@ instance Heap BootstrapHeap where
 
 --------------------------------------------------------------------------------
 
+main = do
+  let go x !n input
+        | n == 0 = return ()
+        | otherwise =
+        case input of
+            -- print max in i
+            (1 : i : ns') -> do
+              maybe (pure ()) (\(Down x) -> print x) $
+                findMin (IM.findWithDefault empty i x)
+
+              go x (n-1) ns'
+
+            -- remove max from i
+            (2 : i : ns') ->
+              let f Nothing = Nothing
+                  f (Just h) = snd <$> deleteMin h
+              in go (IM.alter f i x) (n-1) ns'
+
+            -- add c to i
+            (3 : i : c : ns') ->
+              let f Nothing = Just (insert (Down c) empty)
+                  f (Just h) = Just (insert (Down c) h)
+              in go (IM.alter f i x) (n-1) ns'
+
+            -- merge i and j
+            (4 : i : j : ns')->
+              let f Nothing = IM.lookup j x -- nothing at i
+                  f (Just h) = Just (merge (IM.findWithDefault empty j x) h)
+              in go (IM.delete j (IM.alter f i x)) (n-1) ns'
+
+      st = mempty :: IM.IntMap (BootstrapHeap (Down Int))
+
+  traverse_ (uncurry (go st))
+    . uncons
+    . drop 1
+    . unfoldr (fmap (fmap (B8.dropWhile isSpace)) . B8.readInt)
+    =<< B8.getContents
 
 {-
-main = do
-  [n,q]<- map (read @Int) . words <$> getLine
-  arr :: A.IOArray Int (BootstrapHeap (Down Int)) <- A.newArray (1,n) empty
-
-  let go !q
-        | q == 0 = return ()
-        | otherwise =
-        (map (read @Int) . words <$> getLine) >>=
-        \case
-          -- print max in i
-          [1, i] -> do
-            x <- A.readArray arr i
-            maybe (pure ()) (\(Down x) -> print x) $
-              findMin x
-
-            go (q-1)
-
-          -- remove max from i
-          [2, i] -> do
-            x <- A.readArray arr i
-            case deleteMin x of
-              Nothing -> pure ()
-              Just (_, h) ->
-                A.writeArray arr i h
-            go (q-1)
-
-          -- add c to i
-          [3, i, c] -> do
-            x <- A.readArray arr i
-            A.writeArray arr i (insert (Down c) x)
-            go (q-1)
-
-          -- merge i and j
-          [4, i, j] -> do
-            x <- A.readArray arr i
-            y <- A.readArray arr j
-            A.writeArray arr i (merge x y)
-            A.writeArray arr j empty
-            go (q-1)
-
-  go q
+~/p/h/f/f/FightingArmies ❯❯❯ time (cat input16.txt| ./FightingArmies)
+2064
+1048576
+( cat input16.txt | ./FightingArmies; )  0.55s user 0.11s system 100% cpu 0.650 total
 -}
-
-main = do
-  bs <- B8.getContents
---  print $ unfoldr (fmap (fmap (B8.dropWhile isSpace)). B8.readInt) bs
---  [n,q]<- map (read @Int) . words <$> getLine
-  let (n:q:ns) = unfoldr (fmap (fmap (B8.dropWhile isSpace)). B8.readInt) bs
-
-  let go !n ns x | n == 0 = return ()
-              | otherwise =
-        case ns of
-          -- print max in i
-          (1 : i : ns') -> do
-            maybe (pure ()) (\(Down x) -> print x) $
-              findMin (IM.findWithDefault empty i x)
-
-            go (n-1) ns' x
-
-          -- remove max from i
-          (2 : i : ns') ->
-            let f Nothing = Nothing
-                f (Just h) = snd <$> deleteMin h
-            in go (n-1) ns' (IM.alter f i x)
-
-          -- add c to i
-          (3 : i : c : ns') ->
-            let f Nothing = Just (insert (Down c) empty)
-                f (Just h) = Just (insert (Down c) h)
-            in go (n-1) ns' (IM.alter f i x)
-
-          -- merge i and j
-          (4 : i : j : ns')->
-            let f Nothing = IM.lookup j x -- nothing at i
-                f (Just h) = Just (merge (IM.findWithDefault empty j x) h)
-            in go (n-1) ns' (IM.delete j (IM.alter f i x))
-
-  go q ns (mempty :: IM.IntMap (BootstrapHeap (Down Int)))
