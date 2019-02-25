@@ -1,10 +1,18 @@
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeApplications, ScopedTypeVariables #-}
+import qualified Data.Array.IArray as A
+import qualified Data.Array.Unboxed as A
 import Control.Monad
 import Data.Foldable
 import Data.List
 
 main :: IO ()
-main = mainFast
+main = do
+  let readLn = map (read @Int) . words <$> getLine
+  [m,n,r] <- readLn
+  matrix <- replicateM m readLn
+  let matrixA :: A.UArray Int Int = A.listArray (1, m*n) (concat matrix)
+--  putStrLn ""
+  traverse_ (putStrLn . unwords . map (show . (matrixA A.!))) (doIt m n r)
 
 -- Naive approach: too slow for input09
 -- Split into rings, rotate, then recombine
@@ -49,16 +57,8 @@ rotatel r (Ring m n xs) = Ring m n (y++x)
     r' = r `mod` siz
     siz = 2*(n+(m-2))
 
-doIt :: Int -> Int -> Int -> [[a]] -> [[a]]
-doIt m n r = unrings . map (rotatel r) . rings m n
-
-mainSlow :: IO ()
-mainSlow = do
-  let readLn = map (read @Int) . words <$> getLine
-  [m,n,r] <- readLn
-  matrix <- replicateM m readLn
---  putStrLn ""
-  traverse_ (putStrLn . unwords . map show) (doIt m n r matrix)
+doItSlow :: Int -> Int -> Int -> [[a]] -> [[a]]
+doItSlow m n r = unrings . map (rotatel r) . rings m n
 
 
 --------------------------------------------------------------------------------
@@ -66,5 +66,9 @@ mainSlow = do
 -- Fast approach
 -- Read into array, calculate rotated indices, then print things out by lookup
 
-mainFast :: IO ()
-mainFast = undefined
+doIt :: Int -> Int -> Int -> [[Int]]
+doIt m n r = doItSlow m n r [[ col + (row*n) | col <- [1..n] ]  | row <- [0..m-1]]
+
+
+--translateI :: Int -> Int -> Int -> Int -> Int
+--translateI m n r i =
