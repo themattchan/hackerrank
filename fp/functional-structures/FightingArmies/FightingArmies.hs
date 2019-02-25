@@ -104,6 +104,7 @@ instance Heap BootstrapHeap where
 --------------------------------------------------------------------------------
 
 
+{-
 main = do
   [n,q]<- map (read @Int) . words <$> getLine
   arr :: A.IOArray Int (BootstrapHeap (Down Int)) <- A.newArray (1,n) empty
@@ -145,3 +146,42 @@ main = do
             go (q-1)
 
   go q
+-}
+
+main = do
+  [n,q]<- map (read @Int) . words <$> getLine
+  let go !n x | n == 0 = return ()
+              | otherwise =
+        (map (read @Int) . words <$> getLine) >>=
+        \case
+          -- print max in i
+          [1, i] -> do
+            maybe (pure ()) (\(Down x) -> print x) $
+              findMin (IM.findWithDefault empty i x)
+
+            go (n-1) x
+
+          -- remove max from i
+          [2, i] ->
+            let f Nothing = (Nothing,Nothing)
+                f (Just h) = case deleteMin h of
+                  Nothing -> (Nothing, Nothing)
+                  Just (m, h') -> (Just m, Just h')
+
+                (_, x') = IM.alterF f i x
+            in
+              go (n-1) x'
+
+          -- add c to i
+          [3, i, c] ->
+            let f Nothing = Just (insert (Down c) empty)
+                f (Just h) = Just (insert (Down c) h)
+            in go (n-1) (IM.alter f i x)
+
+          -- merge i and j
+          [4, i, j] ->
+            let f Nothing = IM.lookup j x -- nothing at i
+                f (Just h) = Just (merge (IM.findWithDefault empty j x) h)
+            in go (n-1) (IM.delete j (IM.alter f i x))
+
+  go q (mempty :: IM.IntMap (BootstrapHeap (Down Int)))
